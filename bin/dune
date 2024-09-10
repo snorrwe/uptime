@@ -1,4 +1,4 @@
 (executable
  (public_name dashboard)
  (name main)
- (libraries dashboard))
+ (libraries dream))

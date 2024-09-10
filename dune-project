@@ -19,7 +19,7 @@
  (name dashboard)
  (synopsis "A short synopsis")
  (description "A longer description")
- (depends ocaml dune)
+ (depends ocaml dune (dream (= 1.0.0~alpha7)))
  (tags
   (topics "to describe" your project)))
 

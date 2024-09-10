@@ -21,10 +21,16 @@
             ocamlformat_0_22_4
             ocaml
             opam
+            just
+            pkg-config
+            # dream deps
+            openssl
+            gmp
+            libev
           ];
           shellHook = ''
             eval $(opam env)
-        '';
+          '';
         };
       }
     );
