@@ -1,4 +1,7 @@
 let () =
   Dream.run
     @@ Dream.logger
-    @@ fun _ -> Dream.html "Good morning, world!"
+    @@ Dream.router [
+        Dream.get "/" (fun _ -> Dream.html "Good morning, world!");
+        Dream.get "/hello/:name" (fun req -> Dream.html ("hello " ^ Dream.param req "name"));
+    ]
