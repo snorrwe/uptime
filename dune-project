@@ -19,7 +19,7 @@
  (name dashboard)
  (synopsis "A short synopsis")
  (description "A longer description")
- (depends ocaml dune (dream (= 1.0.0~alpha7)))
+ (depends ocaml dune (dream (= 1.0.0~alpha7)) (caqti-driver-sqlite3 (= 2.1.1)))
  (tags
   (topics "to describe" your project)))
 

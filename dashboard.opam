@@ -13,6 +13,7 @@ depends: [
   "ocaml"
   "dune" {>= "3.16"}
   "dream" {= "1.0.0~alpha7"}
+  "caqti-driver-sqlite3" {= "2.1.1"}
   "odoc" {with-doc}
 ]
 build: [

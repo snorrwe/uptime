@@ -23,6 +23,7 @@
             opam
             just
             pkg-config
+            sqlite
             # dream deps
             openssl
             gmp
