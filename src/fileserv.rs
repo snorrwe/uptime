@@ -7,7 +7,7 @@ use axum::{
     response::IntoResponse,
 };
 use leptos::*;
-use tower::ServiceExt;
+use tower::util::ServiceExt;
 use tower_http::services::ServeDir;
 
 pub async fn file_and_error_handler(
