@@ -15,8 +15,7 @@ prepare $DATABASE_URL="sqlite://dashboard.db":
 fmt:
     cargo fmt
     leptosfmt **/*rs
-    just --fmt
-
+    just --unstable --fmt
 
 add_migration name:
-    sqlx migrate add -r {{name}}
+    sqlx migrate add -r {{ name }}
