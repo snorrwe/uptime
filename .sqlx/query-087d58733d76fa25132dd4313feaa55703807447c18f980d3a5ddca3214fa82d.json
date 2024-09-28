@@ -1,6 +1,6 @@
 {
   "db_name": "SQLite",
-  "query": "\nselect\n    se.id,\n    public_url as \"public_url!\",\n    se.\"name\" as \"name!\",\n    status_code as \"last_status!\",\n    sh.\"created\" as \"last_update!\"\nfrom status_entry as se\ninner join\n    (\n        select status_id, status_code, max(created) as created\n        from status_history\n        group by status_id\n    ) as sh\n    on sh.status_id = se.id\n",
+  "query": "\nselect\n    se.id,\n    public_url as \"public_url!\",\n    se.\"name\" as \"name!\",\n    status_code as \"last_status!\",\n    sh.\"created\" as \"last_update!\"\nfrom status_entry as se\ninner join\n    (\n        select status_id, status_code, created\n        from status_history\n        order by created desc\n        limit 5\n    ) as sh\n    on sh.status_id = se.id\n",
   "describe": {
     "columns": [
       {
@@ -36,9 +36,9 @@
       false,
       false,
       false,
-      true,
+      false,
       true
     ]
   },
-  "hash": "68e689d34c2a17f57723ff6e3d9efe446e9a04a244c6972d25cabd356acda724"
+  "hash": "087d58733d76fa25132dd4313feaa55703807447c18f980d3a5ddca3214fa82d"
 }

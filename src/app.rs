@@ -44,16 +44,20 @@ select
 from status_entry as se
 inner join
     (
-        select status_id, status_code, max(created) as created
+        select status_id, status_code, created
         from status_history
-        group by status_id
+        order by created desc
+        limit 5
     ) as sh
     on sh.status_id = se.id
 "#
-    ).fetch_all(db).await.map_err(|err|{
-            leptos::logging::error!("Failed to load status entries: {err:?}");
-            ServerFnError::ServerError("Failed to load status entries".to_owned())
-        })
+    )
+    .fetch_all(db)
+    .await
+    .map_err(|err| {
+        leptos::logging::error!("Failed to load status entries: {err:?}");
+        ServerFnError::ServerError("Failed to load status entries".to_owned())
+    })
 }
 
 #[component]
@@ -100,13 +104,23 @@ fn HomePage() -> impl IntoView {
                         view! {
                             <ul>
                                 {move || {
-                                    l.iter()
+                                    l.as_slice()
+                                        .chunk_by(|a, b| a.id == b.id)
                                         .map(move |s| {
+                                            debug_assert!(!s.is_empty());
+                                            let first = s.first().unwrap();
                                             view! {
                                                 <li>
-                                                    <a target="_blank" href=&s.public_url>
-                                                        {&s.name} " = " {s.last_status}
+                                                    <a target="_blank" href=&first.public_url>
+                                                        {&first.name}
                                                     </a>
+                                                    " = "
+                                                    <ul class="flex flex-row">
+                                                        {s
+                                                            .iter()
+                                                            .map(|s| view! { <li>{s.last_status}</li> })
+                                                            .collect_view()}
+                                                    </ul>
                                                 </li>
                                             }
                                         })
