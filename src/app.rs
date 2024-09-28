@@ -110,12 +110,12 @@ fn HomePage() -> impl IntoView {
                                             debug_assert!(!s.is_empty());
                                             let first = s.first().unwrap();
                                             view! {
-                                                <li>
+                                                <li class="flex flex-row">
                                                     <a target="_blank" href=&first.public_url>
                                                         {&first.name}
                                                     </a>
                                                     " = "
-                                                    <ul class="flex flex-row">
+                                                    <ul class="flex flex-row-reverse gap-1">
                                                         {s
                                                             .iter()
                                                             .map(|s| view! { <li>{s.last_status}</li> })
