@@ -1,0 +1,38 @@
+{
+  "db_name": "SQLite",
+  "query": "\nSELECT se.id, se.\"name\" AS \"name!\", sh.\"created\" as \"last_update!\", status_code as \"last_status!\" FROM status_entry AS se\nINNER JOIN (\n    SELECT status_id, status_code, MAX(created) as created\n    FROM status_history\n    GROUP BY status_id\n) AS sh\nON sh.status_id = se.id\n",
+  "describe": {
+    "columns": [
+      {
+        "name": "id",
+        "ordinal": 0,
+        "type_info": "Integer"
+      },
+      {
+        "name": "name!",
+        "ordinal": 1,
+        "type_info": "Text"
+      },
+      {
+        "name": "last_update!",
+        "ordinal": 2,
+        "type_info": "Datetime"
+      },
+      {
+        "name": "last_status!",
+        "ordinal": 3,
+        "type_info": "Integer"
+      }
+    ],
+    "parameters": {
+      "Right": 0
+    },
+    "nullable": [
+      false,
+      true,
+      true,
+      true
+    ]
+  },
+  "hash": "12a19228e0b8223319592c2152a230520ad604378255241bbc03e0d49fd63096"
+}

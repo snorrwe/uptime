@@ -8,3 +8,6 @@ watch $RUST_BACKTRACE="1":
 # Run tests (backend & frontend)
 test:
     cargo watch -- cargo leptos test
+
+prepare $DATABASE_URL="sqlite://dashboard.db":
+    cargo sqlx prepare
