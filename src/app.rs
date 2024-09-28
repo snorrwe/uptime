@@ -18,7 +18,7 @@ pub mod ssr {
     }
 }
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, Clone)]
 #[cfg_attr(feature = "ssr", derive(sqlx::FromRow))]
 pub struct StatusRow {
     pub id: i64,
@@ -54,27 +54,20 @@ pub fn App() -> impl IntoView {
     provide_meta_context();
 
     view! {
-
-
-        // injects a stylesheet into the document <head>
-        // id=leptos means cargo-leptos will hot-reload this stylesheet
-        <Stylesheet id="leptos" href="/pkg/dashboard.css"/>
+        <Stylesheet id="leptos" href="/pkg/dashboard.css" />
 
         // sets the document title
-        <Title text="Dashboard"/>
+        <Title text="Dashboard" />
 
         // content for this welcome page
         <Router fallback=|| {
             let mut outside_errors = Errors::default();
             outside_errors.insert_with_default_key(AppError::NotFound);
-            view! {
-                <ErrorTemplate outside_errors/>
-            }
-            .into_view()
+            view! { <ErrorTemplate outside_errors /> }.into_view()
         }>
             <main>
                 <Routes>
-                    <Route path="" view=HomePage/>
+                    <Route path="" view=HomePage />
                 </Routes>
             </main>
         </Router>
@@ -84,9 +77,32 @@ pub fn App() -> impl IntoView {
 /// Renders the home page of your application.
 #[component]
 fn HomePage() -> impl IntoView {
-    let status = list_statuses();
+    let statuses = create_resource(|| (), |_| list_statuses());
 
     view! {
         <h1 class="text-xl">Dashboard</h1>
+        <Suspense fallback=move || {
+            view! { <p>"Loading..."</p> }
+        }>
+            {move || {
+                statuses
+                    .get()
+                    .map(|l| {
+                        let l = l.unwrap();
+                        view! {
+                            <ul>
+                                {move || {
+                                    l
+                                        .iter()
+                                        .map(move |s| {
+                                            view! { <li>{&s.name}</li> }
+                                        })
+                                        .collect_view()
+                                }}
+                            </ul>
+                        }
+                    })
+            }}
+        </Suspense>
     }
 }
