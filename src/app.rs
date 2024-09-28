@@ -35,13 +35,20 @@ async fn list_statuses() -> Result<Vec<StatusRow>, ServerFnError> {
     sqlx::query_as!(
         StatusRow,
         r#"
-SELECT se.id, se."name" AS "name!", sh."created" as "last_update!", status_code as "last_status!", public_url FROM status_entry AS se
-INNER JOIN (
-    SELECT status_id, status_code, MAX(created) as created
-    FROM status_history
-    GROUP BY status_id
-) AS sh
-ON sh.status_id = se.id
+select
+    se.id,
+    public_url as "public_url!",
+    se."name" as "name!",
+    status_code as "last_status!",
+    sh."created" as "last_update!"
+from status_entry as se
+inner join
+    (
+        select status_id, status_code, max(created) as created
+        from status_history
+        group by status_id
+    ) as sh
+    on sh.status_id = se.id
 "#
     ).fetch_all(db).await.map_err(|err|{
             leptos::logging::error!("Failed to load status entries: {err:?}");
