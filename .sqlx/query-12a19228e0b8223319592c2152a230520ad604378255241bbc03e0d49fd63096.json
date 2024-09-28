@@ -16,7 +16,7 @@
       {
         "name": "last_update!",
         "ordinal": 2,
-        "type_info": "Datetime"
+        "type_info": "Text"
       },
       {
         "name": "last_status!",

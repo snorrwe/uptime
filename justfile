@@ -17,3 +17,6 @@ fmt:
     leptosfmt **/*rs
     just --fmt
 
+
+add_migration name:
+    sqlx migrate add -r {{name}}
