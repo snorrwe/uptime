@@ -30,6 +30,7 @@
             tailwindcss
             sqlite
             sqlx-cli
+            leptosfmt
           ];
         };
       }

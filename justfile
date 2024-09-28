@@ -11,3 +11,9 @@ test:
 
 prepare $DATABASE_URL="sqlite://dashboard.db":
     cargo sqlx prepare
+
+fmt:
+    cargo fmt
+    leptosfmt **/*rs
+    just --fmt
+
