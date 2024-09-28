@@ -22,6 +22,7 @@ tracing = { version = "0.1", optional = true }
 http = "1"
 
 [features]
+default = ["hydrate", "ssr"]
 hydrate = ["leptos/hydrate", "leptos_meta/hydrate", "leptos_router/hydrate"]
 ssr = [
     "dep:axum",
