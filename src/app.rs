@@ -22,6 +22,7 @@ pub mod ssr {
 #[cfg_attr(feature = "ssr", derive(sqlx::FromRow))]
 pub struct StatusRow {
     pub id: i64,
+    pub public_url: String,
     pub name: String,
     pub last_status: i64,
     pub last_update: chrono::NaiveDateTime,
@@ -34,7 +35,7 @@ async fn list_statuses() -> Result<Vec<StatusRow>, ServerFnError> {
     sqlx::query_as!(
         StatusRow,
         r#"
-SELECT se.id, se."name" AS "name!", sh."created" as "last_update!", status_code as "last_status!" FROM status_entry AS se
+SELECT se.id, se."name" AS "name!", sh."created" as "last_update!", status_code as "last_status!", public_url FROM status_entry AS se
 INNER JOIN (
     SELECT status_id, status_code, MAX(created) as created
     FROM status_history
@@ -92,10 +93,15 @@ fn HomePage() -> impl IntoView {
                         view! {
                             <ul>
                                 {move || {
-                                    l
-                                        .iter()
+                                    l.iter()
                                         .map(move |s| {
-                                            view! { <li>{&s.name}</li> }
+                                            view! {
+                                                <li>
+                                                    <a target="_blank" href=&s.public_url>
+                                                        {&s.name} " = " {s.last_status}
+                                                    </a>
+                                                </li>
+                                            }
                                         })
                                         .collect_view()
                                 }}
