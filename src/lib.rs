@@ -2,6 +2,8 @@ pub mod app;
 pub mod error_template;
 #[cfg(feature = "ssr")]
 pub mod fileserv;
+#[cfg(feature = "ssr")]
+pub mod status_check;
 
 #[cfg(feature = "hydrate")]
 #[wasm_bindgen::prelude::wasm_bindgen]

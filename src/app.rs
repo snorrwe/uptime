@@ -4,6 +4,17 @@ use leptos_meta::*;
 use leptos_router::*;
 use serde_derive::{Deserialize, Serialize};
 
+#[derive(Deserialize)]
+pub struct Entry {
+    // FIXME: remove name and use public_url
+    pub name: String,
+    pub public_url: url::Url,
+    pub internal_url: Option<url::Url>,
+}
+
+#[derive(Deserialize)]
+pub struct Entries(pub Vec<Entry>);
+
 #[cfg(feature = "ssr")]
 pub mod ssr {
 

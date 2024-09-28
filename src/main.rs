@@ -1,4 +1,11 @@
 #[cfg(feature = "ssr")]
+#[derive(clap_derive::Parser)]
+struct Args {
+    #[clap(long, short, default_value = "dashboard.toml")]
+    pub config: std::path::PathBuf,
+}
+
+#[cfg(feature = "ssr")]
 #[tokio::main]
 async fn main() {
     use axum::Router;
@@ -8,6 +15,14 @@ async fn main() {
     use leptos::*;
     use leptos_axum::{generate_route_list, LeptosRoutes};
     use sqlx::sqlite::SqlitePoolOptions;
+    use clap::Parser;
+
+    let args = Args::parse();
+
+    let config = std::fs::read_to_string(&args.config).expect("Failed to read config file");
+
+
+    let config: Entries = toml::from_str(&config).expect("Failed to parse config file");
 
     let db_url = std::env::var("DATABASE_URL").unwrap_or_else(|_| "dashboard.db".to_owned());
 
