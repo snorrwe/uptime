@@ -27,6 +27,7 @@
             cargo-edit
             cargo-leptos
             cargo-generate
+                        tailwindcss
           ];
         };
       }
