@@ -19,3 +19,7 @@ fmt:
 
 add_migration name:
     sqlx migrate add -r {{ name }}
+
+setup-db $DATABASE_URL="sqlite://dashboard.db":
+    sqlx database setup
+    @just prepare
