@@ -33,11 +33,13 @@ url = { version = "2.5.2", features = ["serde"] }
 clap = { version = "4.5.18", optional = true }
 clap_derive = { version = "4.5.18", optional = true }
 anyhow = "1.0.89"
+reqwest = { version = "0.12.7", optional = true }
 
 [features]
 default = ["hydrate", "ssr"]
 hydrate = ["leptos/hydrate", "leptos_meta/hydrate", "leptos_router/hydrate"]
 ssr = [
+    "dep:reqwest",
     "dep:toml",
     "dep:clap",
     "dep:clap_derive",

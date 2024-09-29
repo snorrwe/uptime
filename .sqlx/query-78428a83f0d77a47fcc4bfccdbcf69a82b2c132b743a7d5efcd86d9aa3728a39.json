@@ -1,0 +1,26 @@
+{
+  "db_name": "SQLite",
+  "query": "\nselect id, coalesce(internal_url, public_url) as url from status_entry\n",
+  "describe": {
+    "columns": [
+      {
+        "name": "id",
+        "ordinal": 0,
+        "type_info": "Integer"
+      },
+      {
+        "name": "url",
+        "ordinal": 1,
+        "type_info": "Text"
+      }
+    ],
+    "parameters": {
+      "Right": 0
+    },
+    "nullable": [
+      false,
+      false
+    ]
+  },
+  "hash": "78428a83f0d77a47fcc4bfccdbcf69a82b2c132b743a7d5efcd86d9aa3728a39"
+}

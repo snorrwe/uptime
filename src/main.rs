@@ -12,6 +12,7 @@ async fn main() {
     use clap::Parser;
     use dashboard::app::*;
     use dashboard::fileserv::file_and_error_handler;
+    use dashboard::status_check::poll_statuses;
     use dashboard::{app::ssr::AppState, status_check::init_statuses};
     use leptos::*;
     use leptos_axum::{generate_route_list, LeptosRoutes};
@@ -44,6 +45,8 @@ async fn main() {
     init_statuses(&db, &config.entries)
         .await
         .expect("Failed to setup database");
+
+    tokio::spawn(poll_statuses(db.clone()));
 
     // Setting get_configuration(None) means we'll be using cargo-leptos's env values
     // For deployment these variables are:

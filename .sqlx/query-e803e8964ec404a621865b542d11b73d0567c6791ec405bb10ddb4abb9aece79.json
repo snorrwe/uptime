@@ -1,0 +1,12 @@
+{
+  "db_name": "SQLite",
+  "query": "\ndelete from status_history\nwhere status_id = $1\n;\ndelete from status_entry\nwhere id = $1\n;\n",
+  "describe": {
+    "columns": [],
+    "parameters": {
+      "Right": 2
+    },
+    "nullable": []
+  },
+  "hash": "e803e8964ec404a621865b542d11b73d0567c6791ec405bb10ddb4abb9aece79"
+}

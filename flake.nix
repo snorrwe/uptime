@@ -31,6 +31,8 @@
             sqlite
             sqlx-cli
             leptosfmt
+            openssl
+            pkg-config
           ];
         };
       }

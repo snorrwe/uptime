@@ -1,8 +1,8 @@
-use std::collections::HashMap;
+use std::{collections::HashMap, time::Duration};
 
 use anyhow::Context;
 use sqlx::{Acquire, SqlitePool};
-use tracing::debug;
+use tracing::{debug, error};
 
 use crate::app::Entry;
 
@@ -48,8 +48,12 @@ pub async fn init_statuses(db: &SqlitePool, entries: &[Entry]) -> anyhow::Result
         debug!(name, id, "Removing missing entry");
         sqlx::query!(
             r#"
-        DELETE FROM status_history WHERE status_id=$1;
-        DELETE FROM status_entry WHERE id=$1;
+delete from status_history
+where status_id = $1
+;
+delete from status_entry
+where id = $1
+;
 "#,
             id,
             id
@@ -64,4 +68,55 @@ pub async fn init_statuses(db: &SqlitePool, entries: &[Entry]) -> anyhow::Result
     Ok(())
 }
 
-pub async fn poll_statuses(db: SqlitePool) {}
+// TODO: config interval
+pub async fn poll_statuses(db: SqlitePool) -> anyhow::Result<()> {
+    loop {
+        if let Err(err) = poll_statuses_once(&db).await {
+            error!(?err, "Status poll failed");
+        }
+        tokio::time::sleep(Duration::from_secs(5)).await;
+    }
+}
+
+pub async fn poll_statuses_once(db: &SqlitePool) -> anyhow::Result<()> {
+    let entries = sqlx::query!(
+        r#"
+select id, coalesce(internal_url, public_url) as url from status_entry
+"#
+    )
+    .fetch_all(db)
+    .await
+    .context("Failed to fetch status entries")?;
+
+    let mut tr = db.begin().await.context("Failed to begin transaction")?;
+    let conn = tr
+        .acquire()
+        .await
+        .context("Failed to acquire db connection")?;
+    for row in entries {
+        let resp = reqwest::get(&row.url).await;
+        let status_code = match resp {
+            Ok(resp) => resp.status().as_u16() as i64,
+            Err(err) => {
+                // TODO: record the error in the db
+                error!(?err, url = row.url, "Request failed");
+                -1
+            }
+        };
+
+        sqlx::query!(
+            r#"
+INSERT INTO status_history (status_id, status_code) VALUES (?, ?)
+            "#,
+            row.id,
+            status_code
+        )
+        .execute(&mut *conn)
+        .await
+        .with_context(|| format!("Failed to insert history entry for {} {}", row.id, row.url))?;
+    }
+    tr.commit()
+        .await
+        .context("Failed to commit the transaction")?;
+    Ok(())
+}
