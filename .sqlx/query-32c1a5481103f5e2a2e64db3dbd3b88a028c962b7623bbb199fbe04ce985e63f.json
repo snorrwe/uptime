@@ -1,0 +1,12 @@
+{
+  "db_name": "SQLite",
+  "query": "\n        INSERT INTO status_entry (name, public_url, internal_url)\n        VALUES ($1, $2, $3)\n        ON CONFLICT DO UPDATE\n        set public_url=$2, internal_url=$3\n",
+  "describe": {
+    "columns": [],
+    "parameters": {
+      "Right": 3
+    },
+    "nullable": []
+  },
+  "hash": "32c1a5481103f5e2a2e64db3dbd3b88a028c962b7623bbb199fbe04ce985e63f"
+}

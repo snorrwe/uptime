@@ -9,20 +9,19 @@ struct Args {
 #[tokio::main]
 async fn main() {
     use axum::Router;
-    use dashboard::app::ssr::AppState;
+    use clap::Parser;
     use dashboard::app::*;
     use dashboard::fileserv::file_and_error_handler;
+    use dashboard::{app::ssr::AppState, status_check::init_statuses};
     use leptos::*;
     use leptos_axum::{generate_route_list, LeptosRoutes};
     use sqlx::sqlite::SqlitePoolOptions;
-    use clap::Parser;
 
     let args = Args::parse();
 
     let config = std::fs::read_to_string(&args.config).expect("Failed to read config file");
 
-
-    let config: Entries = toml::from_str(&config).expect("Failed to parse config file");
+    let config: Config = toml::from_str(&config).expect("Failed to parse config file");
 
     let db_url = std::env::var("DATABASE_URL").unwrap_or_else(|_| "dashboard.db".to_owned());
 
@@ -41,6 +40,10 @@ async fn main() {
         .run(&db)
         .await
         .expect("Error running DB migrations");
+
+    init_statuses(&db, &config.entries)
+        .await
+        .expect("Failed to setup database");
 
     // Setting get_configuration(None) means we'll be using cargo-leptos's env values
     // For deployment these variables are:

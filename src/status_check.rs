@@ -2,19 +2,23 @@ use sqlx::SqlitePool;
 
 use crate::app::Entry;
 
-pub async fn init_statuses(db: SqlitePool, entries: &[Entry]) -> anyhow::Result<()> {
+pub async fn init_statuses(db: &SqlitePool, entries: &[Entry]) -> anyhow::Result<()> {
     for entry in entries {
+        let name = entry.name.as_str();
+        let public_url = entry.public_url.as_str();
+        let internal_url = entry.internal_url.as_ref().map(|x| x.as_str());
         sqlx::query!(
             r#"
         INSERT INTO status_entry (name, public_url, internal_url)
-        VALUES (?, ?, ?)
-        ON CONFLICT DO NOTHING
+        VALUES ($1, $2, $3)
+        ON CONFLICT DO UPDATE
+        set public_url=$2, internal_url=$3
 "#,
-            entry.name.as_str(),
-            entry.public_url,
-            entry.internal_url
+            name,
+            public_url,
+            internal_url
         )
-        .executre(&db)
+        .execute(db)
         .await?;
     }
     Ok(())

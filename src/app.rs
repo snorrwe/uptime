@@ -13,7 +13,9 @@ pub struct Entry {
 }
 
 #[derive(Deserialize)]
-pub struct Entries(pub Vec<Entry>);
+pub struct Config {
+    pub entries: Vec<Entry>,
+}
 
 #[cfg(feature = "ssr")]
 pub mod ssr {
