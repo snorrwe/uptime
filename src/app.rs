@@ -38,7 +38,7 @@ pub struct StatusRow {
     pub public_url: String,
     pub name: String,
     pub last_status: i64,
-    pub last_update: chrono::NaiveDateTime,
+    pub poll_time: chrono::NaiveDateTime,
 }
 
 #[server(GetSatuses, "/status")]
@@ -55,14 +55,14 @@ with
             public_url as "public_url!",
             se."name" as "name!",
             status_code as "last_status!",
-            sh."created" as "last_update!",
+            sh."created" as "poll_time!",
             row_number() over (partition by se.id order by sh.created desc) as rn
         from status_entry as se
         inner join
             (select status_id, status_code, created from status_history) as sh
             on sh.status_id = se.id
     )
-select id, "public_url!", "name!", "last_status!", "last_update!"
+select id, "public_url!", "name!", "last_status!", "poll_time!"
 
 from ranked_history
 where rn <= 5
