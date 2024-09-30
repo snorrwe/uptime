@@ -133,37 +133,7 @@ fn HomePage() -> impl IntoView {
                                 {move || {
                                     l.as_slice()
                                         .chunk_by(|a, b| a.id == b.id)
-                                        .map(move |s| {
-                                            debug_assert!(!s.is_empty());
-                                            let first = s.first().unwrap();
-                                            view! {
-                                                <li class="flex flex-row">
-                                                    <a target="_blank" href=&first.public_url>
-                                                        {&first.name}
-                                                    </a>
-                                                    " = "
-                                                    <ul class="flex flex-row-reverse gap-1">
-                                                        {s
-                                                            .iter()
-                                                            .map(|s| {
-                                                                view! {
-                                                                    <li class="hs-tooltip [--trigger:hover] inline-block">
-
-                                                                        {s.last_status}
-                                                                        <span
-                                                                            class="hs-tooltip-content hs-tooltip-shown:opacity-100 hs-tooltip-shown:visible opacity-0 transition-opacity inline-block absolute invisible z-10 py-3 px-4 bg-white border text-sm text-gray-600 rounded-lg shadow-md dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-400"
-                                                                            role="tooltip"
-                                                                        >
-                                                                            {s.poll_time.to_string()}
-                                                                        </span>
-                                                                    </li>
-                                                                }
-                                                            })
-                                                            .collect_view()}
-                                                    </ul>
-                                                </li>
-                                            }
-                                        })
+                                        .map(status_li)
                                         .collect_view()
                                 }}
                             </ul>
@@ -171,5 +141,37 @@ fn HomePage() -> impl IntoView {
                     })
             }}
         </Suspense>
+    }
+}
+
+fn status_li(s: &[StatusRow]) -> impl IntoView {
+    debug_assert!(!s.is_empty());
+    let first = s.first().unwrap();
+    view! {
+        <li class="flex flex-row">
+            <a target="_blank" href=&first.public_url>
+                {&first.name}
+            </a>
+            " = "
+            <ul class="flex flex-row-reverse gap-1">
+                {s
+                    .iter()
+                    .map(|s| {
+                        view! {
+                            <li class="hs-tooltip [--trigger:hover] inline-block">
+
+                                {s.last_status}
+                                <span
+                                    class="hs-tooltip-content hs-tooltip-shown:opacity-100 hs-tooltip-shown:visible opacity-0 transition-opacity inline-block absolute invisible z-10 py-3 px-4 bg-white border text-sm text-gray-600 rounded-lg shadow-md dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-400"
+                                    role="tooltip"
+                                >
+                                    {s.poll_time.to_string()}
+                                </span>
+                            </li>
+                        }
+                    })
+                    .collect_view()}
+            </ul>
+        </li>
     }
 }
