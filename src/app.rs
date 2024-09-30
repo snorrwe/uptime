@@ -67,7 +67,7 @@ with
 select id, "public_url!", "name!", "last_status!", "poll_time!"
 
 from ranked_history
-where rn <= 5
+where rn <= 10
 "#
     )
     .fetch_all(db)
