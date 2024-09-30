@@ -34,6 +34,7 @@
             openssl
             pkg-config
             nodejs
+            binaryen # wasm-opt
           ];
         };
       }
