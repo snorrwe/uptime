@@ -8,7 +8,6 @@ use serde_derive::{Deserialize, Serialize};
 
 #[derive(Deserialize)]
 pub struct Entry {
-    // FIXME: remove name and use public_url
     pub name: String,
     pub public_url: url::Url,
     pub internal_url: Option<url::Url>,
