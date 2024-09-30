@@ -1,3 +1,5 @@
+use std::time::Duration;
+
 use crate::error_template::{AppError, ErrorTemplate};
 use leptos::*;
 use leptos_meta::*;
@@ -14,6 +16,7 @@ pub struct Entry {
 
 #[derive(Deserialize)]
 pub struct Config {
+    pub poll_internal: Option<Duration>,
     pub entries: Vec<Entry>,
 }
 

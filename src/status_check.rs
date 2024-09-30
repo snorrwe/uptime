@@ -69,12 +69,12 @@ where id = $1
 }
 
 // TODO: config interval
-pub async fn poll_statuses(db: SqlitePool) -> anyhow::Result<()> {
+pub async fn poll_statuses(db: SqlitePool, interval: Duration) -> anyhow::Result<()> {
     loop {
         if let Err(err) = poll_statuses_once(&db).await {
             error!(?err, "Status poll failed");
         }
-        tokio::time::sleep(Duration::from_secs(5)).await;
+        tokio::time::sleep(interval).await;
     }
 }
 

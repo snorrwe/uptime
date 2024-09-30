@@ -8,6 +8,8 @@ struct Args {
 #[cfg(feature = "ssr")]
 #[tokio::main]
 async fn main() {
+    use std::time::Duration;
+
     use axum::Router;
     use clap::Parser;
     use dashboard::app::*;
@@ -46,7 +48,9 @@ async fn main() {
         .await
         .expect("Failed to setup database");
 
-    tokio::spawn(poll_statuses(db.clone()));
+    let interval = config.poll_internal.unwrap_or(Duration::from_secs(30));
+    logging::log!("Polling every {interval:?}");
+    tokio::spawn(poll_statuses(db.clone(), interval));
 
     // Setting get_configuration(None) means we'll be using cargo-leptos's env values
     // For deployment these variables are:
