@@ -88,6 +88,7 @@ pub fn App() -> impl IntoView {
 
         // sets the document title
         <Title text="Dashboard" />
+        <Script src="/preline/preline.js"></Script>
 
         // content for this welcome page
         <Router fallback=|| {
@@ -136,7 +137,20 @@ fn HomePage() -> impl IntoView {
                                                     <ul class="flex flex-row-reverse gap-1">
                                                         {s
                                                             .iter()
-                                                            .map(|s| view! { <li>{s.last_status}</li> })
+                                                            .map(|s| {
+                                                                view! {
+                                                                    <li class="hs-tooltip [--trigger:hover] inline-block">
+
+                                                                        {s.last_status}
+                                                                        <span
+                                                                            class="hs-tooltip-content hs-tooltip-shown:opacity-100 hs-tooltip-shown:visible opacity-0 transition-opacity inline-block absolute invisible z-10 py-3 px-4 bg-white border text-sm text-gray-600 rounded-lg shadow-md dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-400"
+                                                                            role="tooltip"
+                                                                        >
+                                                                            {s.poll_time.to_string()}
+                                                                        </span>
+                                                                    </li>
+                                                                }
+                                                            })
                                                             .collect_view()}
                                                     </ul>
                                                 </li>
