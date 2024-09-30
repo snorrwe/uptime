@@ -33,6 +33,7 @@
             leptosfmt
             openssl
             pkg-config
+            nodejs
           ];
         };
       }

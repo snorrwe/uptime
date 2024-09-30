@@ -23,3 +23,6 @@ add_migration name:
 setup-db $DATABASE_URL="sqlite://dashboard.db":
     sqlx database setup
     @just prepare
+
+init:
+    npm i
