@@ -10,7 +10,7 @@ use serde_derive::{Deserialize, Serialize};
 pub struct Entry {
     pub name: String,
     pub public_url: url::Url,
-    pub internal_url: Option<url::Url>,
+    pub polling_url: Option<url::Url>,
 }
 
 #[derive(Deserialize)]

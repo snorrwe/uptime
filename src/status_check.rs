@@ -27,7 +27,7 @@ pub async fn init_statuses(db: &SqlitePool, entries: &[Entry]) -> anyhow::Result
         let name = entry.name.as_str();
         existing_entries.remove(name);
         let public_url = entry.public_url.as_str();
-        let internal_url = entry.internal_url.as_ref().map(|x| x.as_str());
+        let internal_url = entry.polling_url.as_ref().map(|x| x.as_str());
         sqlx::query!(
             r#"
         INSERT INTO status_entry (name, public_url, internal_url)
