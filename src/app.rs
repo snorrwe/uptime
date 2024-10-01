@@ -159,15 +159,29 @@ fn status_li(s: &[StatusRow]) -> impl IntoView {
 }
 
 fn status_pip(s: &StatusRow) -> impl IntoView {
-    view! {
-        <li class="hs-tooltip [--trigger:hover] inline-block">
+    let is_success = 200 <= s.last_status && s.last_status <= 299;
+    let is_redirect = 300 <= s.last_status && s.last_status <= 399;
 
-            {s.last_status}
+    let color = match (is_success, is_redirect) {
+        (false, true) => "text-yellow-500",
+        (true, false) => "text-green-500",
+        (false, false) => "text-red-500",
+        (true, true) => {
+            unreachable!()
+        }
+    };
+
+    const PIP: char = '\u{25AE}';
+
+    view! {
+        <li class=format!("{color} hs-tooltip [--trigger:hover] inline-block")>
+            {PIP}
             <span
                 class="hs-tooltip-content hs-tooltip-shown:opacity-100 hs-tooltip-shown:visible opacity-0 transition-opacity inline-block absolute invisible z-10 py-3 px-4 bg-white border text-sm text-gray-600 rounded-lg shadow-md dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-400"
                 role="tooltip"
             >
                 {s.poll_time.to_string()}
+            " Status: "{s.last_status}
             </span>
         </li>
     }
