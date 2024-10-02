@@ -134,6 +134,7 @@ fn HomePage() -> impl IntoView {
                                     <tr>
                                         <th>Name</th>
                                         <th>Uptime</th>
+                                        <th>Last ping</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -168,7 +169,7 @@ fn status_row(s: &[StatusRow]) -> impl IntoView {
     };
 
     view! {
-        <tr class=format!("{color}")>
+        <tr class=format!("{color} align-middle text-center")>
             <td class="flex flex-row">
                 <a target="_blank" href=&first.public_url>
                     <div class="cursor-pointer text-blue-600 underline decoration-gray-800 hover:opacity-80 focus:outline-none focus:opacity-80 dark:decoration-white">
@@ -181,6 +182,7 @@ fn status_row(s: &[StatusRow]) -> impl IntoView {
                     {s.iter().map(status_pip).collect_view()}
                 </ul>
             </td>
+            <td>{first.poll_time.to_string()}</td>
         </tr>
     }
 }
@@ -204,9 +206,11 @@ fn status_pip(s: &StatusRow) -> impl IntoView {
         <li class=format!(
             "{color} hs-tooltip [--trigger:hover] inline-block",
         )>
+        <span class="cursor-default text-lg hover:text-3xl">
             {PIP}
+        </span>
             <span
-                class="hs-tooltip-content hs-tooltip-shown:opacity-100 hs-tooltip-shown:visible opacity-0 transition-opacity inline-block absolute invisible z-10 py-3 px-4 bg-white border text-sm text-gray-600 rounded-lg shadow-md dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-400"
+            class="hs-tooltip-content hs-tooltip-shown:opacity-100 hs-tooltip-shown:visible opacity-0 transition-opacity inline-block absolute invisible z-10 py-3 px-4 bg-white border text-sm text-gray-600 rounded-lg shadow-md dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-400"
                 role="tooltip"
             >
                 {s.poll_time.to_string()}
