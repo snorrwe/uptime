@@ -29,3 +29,6 @@ init:
 
 docker-build:
     docker build . -t dashboard
+
+docker-run: docker-build
+    docker run --rm -it -v ./dashboard.toml:/app/dashboard.toml -p8080 dashboard
