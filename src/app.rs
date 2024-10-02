@@ -96,7 +96,7 @@ pub fn App() -> impl IntoView {
             outside_errors.insert_with_default_key(AppError::NotFound);
             view! { <ErrorTemplate outside_errors /> }.into_view()
         }>
-            <main>
+            <main class="container mx-auto">
                 <Routes>
                     <Route path="" view=HomePage />
                 </Routes>
@@ -111,7 +111,7 @@ fn HomePage() -> impl IntoView {
     let statuses = create_resource(|| (), |_| list_statuses());
 
     view! {
-        <h1 class="text-xl">Dashboard</h1>
+        <h1 class="text-4xl">Dashboard</h1>
         <Suspense fallback=move || {
             view! {
                 <div
@@ -159,7 +159,9 @@ fn status_row(s: &[StatusRow]) -> impl IntoView {
         <tr>
             <td class="flex flex-row">
                 <a target="_blank" href=&first.public_url>
-                    <div class="cursor-pointer">{&first.name}</div>
+                    <div class="cursor-pointer text-blue-600 underline decoration-gray-800 hover:opacity-80 focus:outline-none focus:opacity-80 dark:decoration-white">
+                        {&first.name}
+                    </div>
                 </a>
             </td>
             <td>
