@@ -1,0 +1,12 @@
+*
+!src
+!Cargo.lock
+!Cargo.toml
+!public
+!migrations
+!.sqlx
+!style
+!rust-toolchain.toml
+!tailwind.config.js
+!package.json
+!package-lock.json

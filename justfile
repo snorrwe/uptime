@@ -26,3 +26,6 @@ setup-db $DATABASE_URL="sqlite://dashboard.db":
 
 init:
     npm i
+
+docker-build:
+    docker build . -t dashboard
