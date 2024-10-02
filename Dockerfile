@@ -28,6 +28,7 @@ COPY --from=builder /work/Cargo.toml /app/
 ENV RUST_LOG="info"
 ENV LEPTOS_SITE_ADDR="0.0.0.0:8080"
 ENV LEPTOS_SITE_ROOT=/app/site
+ENV DATABASE_URL=/var/dashboard/dashboard.db
 EXPOSE 8080
 
 CMD ["/app/dashboard"]
