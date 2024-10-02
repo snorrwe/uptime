@@ -8,6 +8,7 @@ struct Args {
 #[cfg(feature = "ssr")]
 #[tokio::main]
 async fn main() {
+    use std::str::FromStr;
     use std::time::Duration;
 
     use axum::Router;
@@ -27,6 +28,11 @@ async fn main() {
     let config: Config = toml::from_str(&config).expect("Failed to parse config file");
 
     let db_url = std::env::var("DATABASE_URL").unwrap_or_else(|_| "dashboard.db".to_owned());
+    let db_path = std::path::PathBuf::from_str(&db_url).unwrap();
+
+    if let Some(parent) = db_path.parent() {
+        std::fs::create_dir_all(parent).expect("Failed to create directories for database");
+    }
 
     let db = SqlitePoolOptions::new()
         .connect_with(
@@ -34,7 +40,7 @@ async fn main() {
                 .journal_mode(sqlx::sqlite::SqliteJournalMode::Wal)
                 .create_if_missing(true)
                 .foreign_keys(true)
-                .filename(&db_url),
+                .filename(&db_path),
         )
         .await
         .expect("Failed to open database");
