@@ -14,6 +14,15 @@
         pkgs = import nixpkgs {
           inherit system overlays;
         };
+        tailwindcss = pkgs.nodePackages.tailwindcss.overrideAttrs
+          (oa: {
+            plugins = [
+              pkgs.nodePackages."@tailwindcss/aspect-ratio"
+              pkgs.nodePackages."@tailwindcss/forms"
+              pkgs.nodePackages."@tailwindcss/line-clamp"
+              pkgs.nodePackages."@tailwindcss/typography"
+            ];
+          });
       in
       with pkgs;
       {
