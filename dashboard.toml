@@ -1,3 +1,7 @@
 [[entries]]
 name = "google"
 public_url = "https://google.com"
+
+[[entries]]
+name = "wiki"
+public_url = "https://wikipedia.org"

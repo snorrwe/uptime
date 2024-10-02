@@ -129,14 +129,22 @@ fn HomePage() -> impl IntoView {
                     .map(|l| {
                         let l = l.unwrap();
                         view! {
-                            <ul>
-                                {move || {
-                                    l.as_slice()
-                                        .chunk_by(|a, b| a.id == b.id)
-                                        .map(status_li)
-                                        .collect_view()
-                                }}
-                            </ul>
+                            <table class="table-auto">
+                                <thead>
+                                    <tr>
+                                        <th>Name</th>
+                                        <th>Uptime</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {move || {
+                                        l.as_slice()
+                                            .chunk_by(|a, b| a.id == b.id)
+                                            .map(status_row)
+                                            .collect_view()
+                                    }}
+                                </tbody>
+                            </table>
                         }
                     })
             }}
@@ -144,17 +152,22 @@ fn HomePage() -> impl IntoView {
     }
 }
 
-fn status_li(s: &[StatusRow]) -> impl IntoView {
+fn status_row(s: &[StatusRow]) -> impl IntoView {
     debug_assert!(!s.is_empty());
     let first = s.first().unwrap();
     view! {
-        <li class="flex flex-row">
-            <a target="_blank" href=&first.public_url>
-                {&first.name}
-            </a>
-            " = "
-            <ul class="flex flex-row-reverse gap-1">{s.iter().map(status_pip).collect_view()}</ul>
-        </li>
+        <tr>
+            <td class="flex flex-row">
+                <a target="_blank" href=&first.public_url>
+                    <div class="cursor-pointer">{&first.name}</div>
+                </a>
+            </td>
+            <td>
+                <ul class="flex flex-row-reverse gap-1">
+                    {s.iter().map(status_pip).collect_view()}
+                </ul>
+            </td>
+        </tr>
     }
 }
 
@@ -174,14 +187,17 @@ fn status_pip(s: &StatusRow) -> impl IntoView {
     const PIP: char = '\u{25AE}';
 
     view! {
-        <li class=format!("{color} hs-tooltip [--trigger:hover] inline-block")>
+        <li class=format!(
+            "{color} hs-tooltip [--trigger:hover] inline-block",
+        )>
             {PIP}
             <span
                 class="hs-tooltip-content hs-tooltip-shown:opacity-100 hs-tooltip-shown:visible opacity-0 transition-opacity inline-block absolute invisible z-10 py-3 px-4 bg-white border text-sm text-gray-600 rounded-lg shadow-md dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-400"
                 role="tooltip"
             >
                 {s.poll_time.to_string()}
-            " Status: "{s.last_status}
+                " Status: "
+                {s.last_status}
             </span>
         </li>
     }
