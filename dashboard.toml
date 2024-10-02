@@ -9,3 +9,7 @@ public_url = "https://wikipedia.org"
 [[entries]]
 name = "nonexistent"
 public_url = "https://faultyurl.nonexistent"
+
+[[entries]]
+name = "self"
+public_url = "http://localhost:3000"
