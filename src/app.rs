@@ -155,8 +155,20 @@ fn HomePage() -> impl IntoView {
 fn status_row(s: &[StatusRow]) -> impl IntoView {
     debug_assert!(!s.is_empty());
     let first = s.first().unwrap();
+    let is_success = 200 <= first.last_status && first.last_status <= 299;
+    let is_redirect = 300 <= first.last_status && first.last_status <= 399;
+
+    let color = match (is_success, is_redirect) {
+        (false, true) => "bg-yellow-200",
+        (true, false) => "bg-green-200",
+        (false, false) => "bg-red-200",
+        (true, true) => {
+            unreachable!()
+        }
+    };
+
     view! {
-        <tr>
+        <tr class=format!("{color}")>
             <td class="flex flex-row">
                 <a target="_blank" href=&first.public_url>
                     <div class="cursor-pointer text-blue-600 underline decoration-gray-800 hover:opacity-80 focus:outline-none focus:opacity-80 dark:decoration-white">
@@ -174,6 +186,8 @@ fn status_row(s: &[StatusRow]) -> impl IntoView {
 }
 
 fn status_pip(s: &StatusRow) -> impl IntoView {
+    const PIP: char = '\u{25AE}';
+
     let is_success = 200 <= s.last_status && s.last_status <= 299;
     let is_redirect = 300 <= s.last_status && s.last_status <= 399;
 
@@ -185,8 +199,6 @@ fn status_pip(s: &StatusRow) -> impl IntoView {
             unreachable!()
         }
     };
-
-    const PIP: char = '\u{25AE}';
 
     view! {
         <li class=format!(
