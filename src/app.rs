@@ -1,8 +1,8 @@
 use std::time::Duration;
 
 use crate::error_template::{AppError, ErrorTemplate};
-use html::details;
 use leptos::*;
+use leptos_chartistry::*;
 use leptos_meta::*;
 use leptos_router::*;
 use serde_derive::{Deserialize, Serialize};
@@ -173,31 +173,43 @@ struct SiteDetailsParams {
 }
 
 #[component]
+fn LoadingSpinner() -> impl IntoView {
+    view! {
+        <div
+            class="animate-spin inline-block size-6 border-[3px] border-current border-t-transparent text-blue-600 rounded-full dark:text-blue-500"
+            role="status"
+            aria-label="loading"
+        >
+            <span class="sr-only">Loading...</span>
+        </div>
+    }
+}
+
+#[component]
 fn SiteDetails() -> impl IntoView {
     let param = use_params::<SiteDetailsParams>();
     let id = move || param.with(|p| p.as_ref().map(|p| p.id).unwrap_or_default());
 
-    let details = create_resource(|| (), move |_| get_status_details(id()));
+    let d = create_resource(|| (), move |_| get_status_details(id()));
+    // force rendering on client
+    let (details, sd) = create_signal(None);
+    create_effect(move |it| {
+        if let Some(it) = it {
+            return it;
+        }
+        let h = d();
+        sd(h.clone());
+        h
+    });
 
     view! {
-        <Suspense fallback=move || {
-            view! {
-                <div
-                    class="animate-spin inline-block size-6 border-[3px] border-current border-t-transparent text-blue-600 rounded-full dark:text-blue-500"
-                    role="status"
-                    aria-label="loading"
-                >
-                    <h1 class="text-4xl">Uptime</h1>
-                    <span class="sr-only">Loading...</span>
-                </div>
-            }
-        }>
+        <Suspense fallback=LoadingSpinner>
             {move || {
                 match details() {
                     None => {
                         view! {
                             <h1 class="text-4xl">"Uptime"</h1>
-                            <div>"Not found"</div>
+                            <LoadingSpinner />
                         }
                             .into_view()
                     }
@@ -205,9 +217,25 @@ fn SiteDetails() -> impl IntoView {
                         view! { <h1 class="text-4xl">"Error "{err.to_string()}</h1> }.into_view()
                     }
                     Some(Ok(d)) => {
+                        let series = Series::new(|data: &HistoryRow| {
+                                data.poll_time.and_utc().timestamp() as f64
+                            })
+                            .line(
+                                Line::new(|data: &HistoryRow| data.status as f64)
+                                    .with_name("status")
+                                    .with_marker(MarkerShape::Diamond)
+                                    .with_interpolation(Step::HorizontalMiddle),
+                            );
+                        let (data, _) = create_signal(d.history);
                         view! {
                             <h1 class="text-4xl">"Uptime "{d.name}</h1>
-                            <div></div>
+                            <div>
+                                <Chart
+                                    aspect_ratio=AspectRatio::from_outer_ratio(600.0, 300.0)
+                                    series=series
+                                    data=data
+                                />
+                            </div>
                         }
                             .into_view()
                     }
@@ -223,17 +251,7 @@ fn HomePage() -> impl IntoView {
 
     view! {
         <h1 class="text-4xl">Uptime</h1>
-        <Suspense fallback=move || {
-            view! {
-                <div
-                    class="animate-spin inline-block size-6 border-[3px] border-current border-t-transparent text-blue-600 rounded-full dark:text-blue-500"
-                    role="status"
-                    aria-label="loading"
-                >
-                    <span class="sr-only">Loading...</span>
-                </div>
-            }
-        }>
+        <Suspense fallback=LoadingSpinner>
             {move || {
                 statuses
                     .get()
