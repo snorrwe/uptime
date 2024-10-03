@@ -21,15 +21,15 @@ FROM rustlang/rust:nightly-alpine as runner
 
 WORKDIR /app
 
-COPY --from=builder /work/target/release/dashboard /app/
+COPY --from=builder /work/target/release/uptime /app/
 COPY --from=builder /work/target/site /app/site
 COPY --from=builder /work/Cargo.toml /app/
 
 ENV RUST_LOG="info"
 ENV LEPTOS_SITE_ADDR="0.0.0.0:8080"
 ENV LEPTOS_SITE_ROOT=/app/site
-ENV DATABASE_URL=/var/dashboard/dashboard.db
+ENV DATABASE_URL=/var/uptime/uptime.db
 EXPOSE 8080
 
-CMD ["/app/dashboard"]
+CMD ["/app/uptime"]
 

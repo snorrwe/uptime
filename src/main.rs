@@ -1,7 +1,7 @@
 #[cfg(feature = "ssr")]
 #[derive(clap_derive::Parser)]
 struct Args {
-    #[clap(long, short, default_value = "dashboard.toml")]
+    #[clap(long, short, default_value = "uptime.toml")]
     pub config: std::path::PathBuf,
 }
 
@@ -13,10 +13,10 @@ async fn main() {
 
     use axum::Router;
     use clap::Parser;
-    use dashboard::app::*;
-    use dashboard::fileserv::file_and_error_handler;
-    use dashboard::status_check::poll_statuses;
-    use dashboard::{app::ssr::AppState, status_check::init_statuses};
+    use uptime::app::*;
+    use uptime::fileserv::file_and_error_handler;
+    use uptime::status_check::poll_statuses;
+    use uptime::{app::ssr::AppState, status_check::init_statuses};
     use leptos::*;
     use leptos_axum::{generate_route_list, LeptosRoutes};
     use sqlx::sqlite::SqlitePoolOptions;
@@ -27,7 +27,7 @@ async fn main() {
 
     let config: Config = toml::from_str(&config).expect("Failed to parse config file");
 
-    let db_url = std::env::var("DATABASE_URL").unwrap_or_else(|_| "dashboard.db".to_owned());
+    let db_url = std::env::var("DATABASE_URL").unwrap_or_else(|_| "uptime.db".to_owned());
     let db_path = std::path::PathBuf::from_str(&db_url).unwrap();
 
     if let Some(parent) = db_path.parent() {

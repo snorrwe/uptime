@@ -84,10 +84,10 @@ pub fn App() -> impl IntoView {
     provide_meta_context();
 
     view! {
-        <Stylesheet id="leptos" href="/pkg/dashboard.css" />
+        <Stylesheet id="leptos" href="/pkg/uptime.css" />
 
         // sets the document title
-        <Title text="Dashboard" />
+        <Title text="uptime" />
         <Script src="/preline/preline.js"></Script>
 
         // content for this welcome page
@@ -111,7 +111,7 @@ fn HomePage() -> impl IntoView {
     let statuses = create_resource(|| (), |_| list_statuses());
 
     view! {
-        <h1 class="text-4xl">Dashboard</h1>
+        <h1 class="text-4xl">Uptime</h1>
         <Suspense fallback=move || {
             view! {
                 <div

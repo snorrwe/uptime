@@ -15,3 +15,6 @@ playwright/.cache/
 dashboard.db
 dashboard.db-shm
 dashboard.db-wal
+uptime.db
+uptime.db-shm
+uptime.db-wal

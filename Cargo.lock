@@ -639,35 +639,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "dashboard"
-version = "0.1.0"
-dependencies = [
- "anyhow",
- "axum",
- "chrono",
- "clap",
- "clap_derive",
- "console_error_panic_hook",
- "http",
- "leptos",
- "leptos_axum",
- "leptos_meta",
- "leptos_router",
- "reqwest",
- "serde",
- "serde_derive",
- "sqlx",
- "thiserror",
- "tokio",
- "toml",
- "tower 0.4.13",
- "tower-http",
- "tracing",
- "url",
- "wasm-bindgen",
-]
-
-[[package]]
 name = "dashmap"
 version = "5.5.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -3355,6 +3326,35 @@ name = "untrusted"
 version = "0.9.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "8ecb6da28b8a351d773b68d5825ac39017e680750f980f3a1a85cd8dd28a47c1"
+
+[[package]]
+name = "uptime"
+version = "0.1.0"
+dependencies = [
+ "anyhow",
+ "axum",
+ "chrono",
+ "clap",
+ "clap_derive",
+ "console_error_panic_hook",
+ "http",
+ "leptos",
+ "leptos_axum",
+ "leptos_meta",
+ "leptos_router",
+ "reqwest",
+ "serde",
+ "serde_derive",
+ "sqlx",
+ "thiserror",
+ "tokio",
+ "toml",
+ "tower 0.4.13",
+ "tower-http",
+ "tracing",
+ "url",
+ "wasm-bindgen",
+]
 
 [[package]]
 name = "url"

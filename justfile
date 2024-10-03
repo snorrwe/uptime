@@ -9,7 +9,7 @@ watch $RUST_BACKTRACE="1":
 test:
     cargo watch -- cargo leptos test
 
-prepare $DATABASE_URL="sqlite://dashboard.db":
+prepare $DATABASE_URL="sqlite://uptime.db":
     cargo sqlx prepare
 
 fmt:
@@ -20,7 +20,7 @@ fmt:
 add_migration name:
     sqlx migrate add -r {{ name }}
 
-setup-db $DATABASE_URL="sqlite://dashboard.db":
+setup-db $DATABASE_URL="sqlite://uptime.db":
     sqlx database setup
     @just prepare
 
@@ -28,7 +28,7 @@ init:
     npm i
 
 docker-build:
-    docker build . -t dashboard
+    docker build . -t uptime
 
 docker-run: docker-build
-    docker run --rm -it -v ./dashboard.toml:/app/dashboard.toml -p8080 dashboard
+    docker run --rm -it -v ./uptime.toml:/app/uptime.toml -p8080 uptime
