@@ -284,7 +284,9 @@ fn HomePage() -> impl IntoView {
 
 fn status_row(s: &[StatusRow]) -> impl IntoView {
     debug_assert!(!s.is_empty());
-    let first = s.first().unwrap();
+    let first = s.first().cloned().unwrap();
+    let link = format!("/site/{}", first.id);
+    let public_url = &first.public_url;
     let is_success = 200 <= first.last_status && first.last_status <= 299;
     let is_redirect = 300 <= first.last_status && first.last_status <= 399;
 
@@ -299,10 +301,15 @@ fn status_row(s: &[StatusRow]) -> impl IntoView {
 
     view! {
         <tr class=format!("{color} align-middle text-center")>
-            <td class="flex flex-row">
-                <a target="_blank" href=&first.public_url>
+            <td class="flex flex-row gap-2">
+                <A href=link>
                     <div class="cursor-pointer text-blue-600 underline decoration-gray-800 hover:opacity-80 focus:outline-none focus:opacity-80 dark:decoration-white">
                         {&first.name}
+                    </div>
+                </A>
+                <a target="_blank" href=public_url>
+                    <div class="cursor-pointer text-blue-600 underline decoration-gray-800 hover:opacity-80 focus:outline-none focus:opacity-80 dark:decoration-white">
+                        "open"
                     </div>
                 </a>
             </td>
