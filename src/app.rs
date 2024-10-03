@@ -234,7 +234,10 @@ fn SiteDetails() -> impl IntoView {
                                     aspect_ratio=AspectRatio::from_outer_ratio(600.0, 300.0)
                                     series=series
                                     data=data
+                                    left=TickLabels::aligned_floats()
+                                    tooltip=Tooltip::left_cursor()
                                 />
+
                             </div>
                         }
                             .into_view()
