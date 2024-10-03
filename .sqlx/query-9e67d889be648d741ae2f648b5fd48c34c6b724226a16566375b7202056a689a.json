@@ -1,0 +1,26 @@
+{
+  "db_name": "SQLite",
+  "query": "\nselect status_code as \"status!\", created as \"poll_time!\"\nfrom status_history\nwhere status_id = ?\norder by created desc\n",
+  "describe": {
+    "columns": [
+      {
+        "name": "status!",
+        "ordinal": 0,
+        "type_info": "Integer"
+      },
+      {
+        "name": "poll_time!",
+        "ordinal": 1,
+        "type_info": "Datetime"
+      }
+    ],
+    "parameters": {
+      "Right": 1
+    },
+    "nullable": [
+      false,
+      true
+    ]
+  },
+  "hash": "9e67d889be648d741ae2f648b5fd48c34c6b724226a16566375b7202056a689a"
+}

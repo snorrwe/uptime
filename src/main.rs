@@ -13,13 +13,13 @@ async fn main() {
 
     use axum::Router;
     use clap::Parser;
+    use leptos::*;
+    use leptos_axum::{generate_route_list, LeptosRoutes};
+    use sqlx::sqlite::SqlitePoolOptions;
     use uptime::app::*;
     use uptime::fileserv::file_and_error_handler;
     use uptime::status_check::poll_statuses;
     use uptime::{app::ssr::AppState, status_check::init_statuses};
-    use leptos::*;
-    use leptos_axum::{generate_route_list, LeptosRoutes};
-    use sqlx::sqlite::SqlitePoolOptions;
 
     let args = Args::parse();
 

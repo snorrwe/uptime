@@ -1,6 +1,7 @@
 use std::time::Duration;
 
 use crate::error_template::{AppError, ErrorTemplate};
+use html::details;
 use leptos::*;
 use leptos_meta::*;
 use leptos_router::*;
@@ -78,6 +79,66 @@ where rn <= 10
     })
 }
 
+#[derive(Debug, Serialize, Deserialize, Clone)]
+#[cfg_attr(feature = "ssr", derive(sqlx::FromRow))]
+pub struct StatusDetails {
+    pub id: i64,
+    pub public_url: String,
+    pub name: String,
+    pub history: Vec<HistoryRow>,
+}
+
+#[derive(Debug, Serialize, Deserialize, Clone)]
+#[cfg_attr(feature = "ssr", derive(sqlx::FromRow))]
+pub struct HistoryRow {
+    pub status: i64,
+    pub poll_time: chrono::NaiveDateTime,
+}
+
+#[server(GetSatus, "/status/:id")]
+async fn get_status_details(id: i64) -> Result<StatusDetails, ServerFnError> {
+    let state = expect_context::<ssr::AppState>();
+    let db = &state.db;
+
+    let header = sqlx::query!(
+        r#"
+select name as "name!", public_url as "public_url!" from status_entry where id = ?
+"#,
+        id
+    )
+    .fetch_one(db)
+    .await
+    .map_err(|err| {
+        leptos::logging::error!("Failed to load status entry: {err:?}");
+        ServerFnError::<server_fn::error::NoCustomError>::ServerError(
+            "Failed to load status entry".to_owned(),
+        )
+    })?;
+
+    sqlx::query_as!(
+        HistoryRow,
+        r#"
+select status_code as "status!", created as "poll_time!"
+from status_history
+where status_id = ?
+order by created desc
+"#,
+        id
+    )
+    .fetch_all(db)
+    .await
+    .map_err(|err| {
+        leptos::logging::error!("Failed to load status history: {err:?}");
+        ServerFnError::ServerError("Failed to load status entry".to_owned())
+    })
+    .map(move |history| StatusDetails {
+        id,
+        public_url: header.public_url,
+        name: header.name,
+        history,
+    })
+}
+
 #[component]
 pub fn App() -> impl IntoView {
     // Provides context that manages stylesheets, titles, meta tags, etc.
@@ -99,13 +160,63 @@ pub fn App() -> impl IntoView {
             <main class="container mx-auto">
                 <Routes>
                     <Route path="" view=HomePage />
+                    <Route path="/site/:id" view=SiteDetails />
                 </Routes>
             </main>
         </Router>
     }
 }
 
-/// Renders the home page of your application.
+#[derive(Params, Debug, PartialEq, Eq, Clone, Copy)]
+struct SiteDetailsParams {
+    pub id: i64,
+}
+
+#[component]
+fn SiteDetails() -> impl IntoView {
+    let param = use_params::<SiteDetailsParams>();
+    let id = move || param.with(|p| p.as_ref().map(|p| p.id).unwrap_or_default());
+
+    let details = create_resource(|| (), move |_| get_status_details(id()));
+
+    view! {
+        <Suspense fallback=move || {
+            view! {
+                <div
+                    class="animate-spin inline-block size-6 border-[3px] border-current border-t-transparent text-blue-600 rounded-full dark:text-blue-500"
+                    role="status"
+                    aria-label="loading"
+                >
+                    <h1 class="text-4xl">Uptime</h1>
+                    <span class="sr-only">Loading...</span>
+                </div>
+            }
+        }>
+            {move || {
+                match details() {
+                    None => {
+                        view! {
+                            <h1 class="text-4xl">"Uptime"</h1>
+                            <div>"Not found"</div>
+                        }
+                            .into_view()
+                    }
+                    Some(Err(err)) => {
+                        view! { <h1 class="text-4xl">"Error "{err.to_string()}</h1> }.into_view()
+                    }
+                    Some(Ok(d)) => {
+                        view! {
+                            <h1 class="text-4xl">"Uptime "{d.name}</h1>
+                            <div></div>
+                        }
+                            .into_view()
+                    }
+                }
+            }}
+        </Suspense>
+    }
+}
+
 #[component]
 fn HomePage() -> impl IntoView {
     let statuses = create_resource(|| (), |_| list_statuses());
