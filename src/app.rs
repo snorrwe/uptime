@@ -208,7 +208,11 @@ fn SiteDetails() -> impl IntoView {
                     Some(Ok(d)) => {
                         view! {
                             <h1 class="text-4xl">"Uptime "{d.name}</h1>
-                            <div>{}</div>
+                            <div>
+                                <ul class="flex flex-row-reverse gap-1">
+                                    {d.history.iter().map(status_pip).collect_view()}
+                                </ul>
+                            </div>
                         }
                             .into_view()
                     }
@@ -293,14 +297,26 @@ fn status_row(s: &[StatusRow]) -> impl IntoView {
 }
 
 fn status_pip_list(s: &[StatusRow]) -> impl IntoView {
-    view! { <ul class="flex flex-row-reverse gap-1">{s.iter().map(status_pip).collect_view()}</ul> }
+    view! {
+        <ul class="flex flex-row-reverse gap-1">
+            {s
+                .iter()
+                .map(|s| status_pip(
+                    &HistoryRow {
+                        status: s.last_status,
+                        poll_time: s.poll_time,
+                    },
+                ))
+                .collect_view()}
+        </ul>
+    }
 }
 
-fn status_pip(s: &StatusRow) -> impl IntoView {
+fn status_pip(s: &HistoryRow) -> impl IntoView {
     const PIP: char = '\u{25AE}';
 
-    let is_success = 200 <= s.last_status && s.last_status <= 299;
-    let is_redirect = 300 <= s.last_status && s.last_status <= 399;
+    let is_success = 200 <= s.status && s.status <= 299;
+    let is_redirect = 300 <= s.status && s.status <= 399;
 
     let color = match (is_success, is_redirect) {
         (false, true) => "text-yellow-500",
@@ -315,7 +331,7 @@ fn status_pip(s: &StatusRow) -> impl IntoView {
         <li class=color>
             <span
                 class="cursor-default text-lg hover:text-3xl"
-                title=format!("{} Status: {}", s.poll_time.to_string(), s.last_status)
+                title=format!("{} Status: {}", s.poll_time.to_string(), s.status)
             >
                 {PIP}
             </span>
