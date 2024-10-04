@@ -31,4 +31,4 @@ docker-build:
     docker build . -t uptime
 
 docker-run: docker-build
-    docker run --rm -it -v ./uptime.toml:/app/uptime.toml -p8080 uptime
+    docker run --rm -it -v ./uptime.toml:/app/uptime.toml -p8080:8080 uptime
