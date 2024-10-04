@@ -34,7 +34,6 @@ clap = { version = "4.5.18", optional = true }
 clap_derive = { version = "4.5.18", optional = true }
 anyhow = "1.0.89"
 reqwest = { version = "0.12.7", optional = true }
-leptos-chartistry = "0.1.7"
 
 [features]
 default = ["hydrate", "ssr"]

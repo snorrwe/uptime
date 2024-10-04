@@ -2,7 +2,6 @@ use std::time::Duration;
 
 use crate::error_template::{AppError, ErrorTemplate};
 use leptos::*;
-use leptos_chartistry::*;
 use leptos_meta::*;
 use leptos_router::*;
 use serde_derive::{Deserialize, Serialize};
@@ -190,17 +189,7 @@ fn SiteDetails() -> impl IntoView {
     let param = use_params::<SiteDetailsParams>();
     let id = move || param.with(|p| p.as_ref().map(|p| p.id).unwrap_or_default());
 
-    let d = create_resource(|| (), move |_| get_status_details(id()));
-    // force rendering on client
-    let (details, sd) = create_signal(None);
-    create_effect(move |it| {
-        if let Some(it) = it {
-            return it;
-        }
-        let h = d();
-        sd(h.clone());
-        h
-    });
+    let details = create_resource(|| (), move |_| get_status_details(id()));
 
     view! {
         <Suspense fallback=LoadingSpinner>
@@ -217,28 +206,9 @@ fn SiteDetails() -> impl IntoView {
                         view! { <h1 class="text-4xl">"Error "{err.to_string()}</h1> }.into_view()
                     }
                     Some(Ok(d)) => {
-                        let series = Series::new(|data: &HistoryRow| {
-                                data.poll_time.and_utc().timestamp() as f64
-                            })
-                            .line(
-                                Line::new(|data: &HistoryRow| data.status as f64)
-                                    .with_name("status")
-                                    .with_marker(MarkerShape::Diamond)
-                                    .with_interpolation(Step::HorizontalMiddle),
-                            );
-                        let (data, _) = create_signal(d.history);
                         view! {
                             <h1 class="text-4xl">"Uptime "{d.name}</h1>
-                            <div>
-                                <Chart
-                                    aspect_ratio=AspectRatio::from_outer_ratio(600.0, 300.0)
-                                    series=series
-                                    data=data
-                                    left=TickLabels::aligned_floats()
-                                    tooltip=Tooltip::left_cursor()
-                                />
-
-                            </div>
+                            <div>{}</div>
                         }
                             .into_view()
                     }
@@ -316,14 +286,14 @@ fn status_row(s: &[StatusRow]) -> impl IntoView {
                     </div>
                 </a>
             </td>
-            <td>
-                <ul class="flex flex-row-reverse gap-1">
-                    {s.iter().map(status_pip).collect_view()}
-                </ul>
-            </td>
+            <td>{status_pip_list(s)}</td>
             <td>{first.poll_time.to_string()}</td>
         </tr>
     }
+}
+
+fn status_pip_list(s: &[StatusRow]) -> impl IntoView {
+    view! { <ul class="flex flex-row-reverse gap-1">{s.iter().map(status_pip).collect_view()}</ul> }
 }
 
 fn status_pip(s: &StatusRow) -> impl IntoView {
