@@ -147,7 +147,7 @@ pub fn App() -> impl IntoView {
         <Stylesheet id="leptos" href="/pkg/uptime.css" />
 
         // sets the document title
-        <Title text="uptime" />
+        <Title text="Uptime" />
         <Script src="/preline/preline.js"></Script>
 
         // content for this welcome page
