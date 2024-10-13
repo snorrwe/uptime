@@ -283,6 +283,7 @@ fn SiteDetails() -> impl IntoView {
                         view! { <h1 class="text-4xl">"Error "{err.to_string()}</h1> }.into_view()
                     }
                     Some(Ok(d)) => {
+                        let last = d.history.first().cloned();
                         view! {
                             <h1 class="text-4xl">"Uptime "{d.name}</h1>
                             <div class="font-medium text-blue-600 dark:text-blue-500 hover:underline">
@@ -291,6 +292,15 @@ fn SiteDetails() -> impl IntoView {
                                 </a>
                             </div>
                             <div>
+                                {move || {
+                                    last.as_ref()
+                                        .map(|last| {
+                                            view! {
+                                                <div>"Last fetch: " {last.poll_time.to_string()}</div>
+                                                <div>"Status: " {last.status.to_string()}</div>
+                                            }
+                                        })
+                                }}
                                 <ul class="flex flex-row-reverse gap-1 flex-wrap">
                                     {d.history.iter().map(status_pip).collect_view()}
                                 </ul>
