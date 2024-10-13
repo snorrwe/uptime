@@ -286,7 +286,7 @@ fn SiteDetails() -> impl IntoView {
                         view! {
                             <h1 class="text-4xl">"Uptime "{d.name}</h1>
                             <div>
-                                <ul class="flex flex-row-reverse gap-1">
+                                <ul class="flex flex-row-reverse gap-1 flex-wrap">
                                     {d.history.iter().map(status_pip).collect_view()}
                                 </ul>
                             </div>
