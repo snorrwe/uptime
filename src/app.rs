@@ -285,6 +285,11 @@ fn SiteDetails() -> impl IntoView {
                     Some(Ok(d)) => {
                         view! {
                             <h1 class="text-4xl">"Uptime "{d.name}</h1>
+                            <div class="font-medium text-blue-600 dark:text-blue-500 hover:underline">
+                                <a href=d.public_url.clone() target="_blank">
+                                    {d.public_url.clone()}
+                                </a>
+                            </div>
                             <div>
                                 <ul class="flex flex-row-reverse gap-1 flex-wrap">
                                     {d.history.iter().map(status_pip).collect_view()}
