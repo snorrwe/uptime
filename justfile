@@ -7,7 +7,8 @@ watch $RUST_BACKTRACE="1":
 
 # Run tests (backend & frontend)
 test:
-    cargo watch -- cargo leptos test
+    cargo leptos test
+    cargo leptos end-to-end
 
 prepare $DATABASE_URL="sqlite://uptime.db":
     cargo sqlx prepare
