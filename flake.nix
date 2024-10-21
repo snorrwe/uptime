@@ -44,7 +44,14 @@
             pkg-config
             nodejs
             binaryen # wasm-opt
+
+            # e2e tests
+            playwright-driver.browsers
           ];
+          shellHook = ''
+            export PLAYWRIGHT_BROWSERS_PATH=${pkgs.playwright-driver.browsers}
+            export PLAYWRIGHT_SKIP_VALIDATE_HOST_REQUIREMENTS=true
+          '';
         };
       }
     );
