@@ -17,7 +17,7 @@ COPY . .
 
 RUN cargo leptos build --release -vv
 
-FROM rustlang/rust:nightly-alpine as runner
+FROM alpine as runner
 
 WORKDIR /app
 
