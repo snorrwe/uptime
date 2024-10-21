@@ -148,7 +148,6 @@ pub fn App() -> impl IntoView {
 
         // sets the document title
         <Title text="Uptime" />
-        <Script src="/preline/preline.js"></Script>
 
         // content for this welcome page
         <Router fallback=|| {

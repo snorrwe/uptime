@@ -1,7 +1,7 @@
 module.exports = {
-    content: ["index.html", "./src/**/*.rs", "node_modules/preline/dist/*.js"],
+    content: ["index.html", "./src/**/*.rs"],
     theme: {
         extend: {},
     },
-    plugins: [require("preline/plugin")],
+    plugins: [],
 };
