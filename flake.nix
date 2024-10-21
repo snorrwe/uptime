@@ -43,6 +43,7 @@
             openssl
             pkg-config
             nodejs
+            kubernetes-helm
             binaryen # wasm-opt
 
             # e2e tests

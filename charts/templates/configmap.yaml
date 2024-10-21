@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: uptime-config
+  namespace: {{ .Release.Namespace }}
+data:
+  config: |
+    {{- .Values.config | nindent 8 }}
