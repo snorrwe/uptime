@@ -31,5 +31,5 @@ ENV LEPTOS_SITE_ROOT=/app/site
 ENV DATABASE_URL=/var/uptime/uptime.db
 EXPOSE 8080
 
-CMD ["/app/uptime"]
+CMD ["/app/uptime", "--config", "/etc/uptime/uptime.toml"]
 
