@@ -4,5 +4,5 @@ metadata:
   name: uptime-config
   namespace: {{ .Release.Namespace }}
 data:
-  config: |
+  uptime.toml: |
     {{- .Values.config | nindent 8 }}
