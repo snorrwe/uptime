@@ -5,9 +5,7 @@ metadata:
   labels:
     {{- include "uptime.labels" . | nindent 4 }}
 spec:
-  {{- if not .Values.autoscaling.enabled }}
   replicas: 1
-  {{- end }}
   selector:
     matchLabels:
       {{- include "uptime.selectorLabels" . | nindent 6 }}
