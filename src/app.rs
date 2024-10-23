@@ -15,7 +15,7 @@ pub struct Entry {
 
 #[derive(Deserialize)]
 pub struct Config {
-    pub poll_internal: Option<Duration>,
+    pub poll_interval: Option<Duration>,
     pub entries: Vec<Entry>,
 }
 

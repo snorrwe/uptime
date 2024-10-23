@@ -64,7 +64,7 @@ async fn main() {
         .await
         .expect("Failed to setup database");
 
-    let interval = config.poll_internal.unwrap_or(Duration::from_secs(30));
+    let interval = config.poll_interval.unwrap_or(Duration::from_secs(30));
     tracing::info!("Polling every {interval:?}");
     tokio::spawn(poll_statuses(db.clone(), interval));
 
