@@ -79,8 +79,35 @@ async fn main() {
     let listener = tokio::net::TcpListener::bind(&addr).await.unwrap();
     logging::log!("listening on http://{}", &addr);
     axum::serve(listener, app.into_make_service())
+        .with_graceful_shutdown(shutdown_signal())
         .await
         .unwrap();
+}
+
+#[cfg(feature = "ssr")]
+async fn shutdown_signal() {
+    use tokio::signal;
+    let ctrl_c = async {
+        signal::ctrl_c()
+            .await
+            .expect("failed to install Ctrl+C handler");
+    };
+
+    #[cfg(unix)]
+    let terminate = async {
+        signal::unix::signal(signal::unix::SignalKind::terminate())
+            .expect("failed to install signal handler")
+            .recv()
+            .await;
+    };
+
+    #[cfg(not(unix))]
+    let terminate = std::future::pending::<()>();
+
+    tokio::select! {
+        _ = ctrl_c => {},
+        _ = terminate => {},
+    }
 }
 
 #[cfg(not(feature = "ssr"))]
