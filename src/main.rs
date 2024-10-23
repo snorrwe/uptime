@@ -16,10 +16,20 @@ async fn main() {
     use leptos::*;
     use leptos_axum::{generate_route_list, LeptosRoutes};
     use sqlx::sqlite::SqlitePoolOptions;
+    use tracing_subscriber::prelude::*;
     use uptime::app::*;
     use uptime::fileserv::file_and_error_handler;
     use uptime::status_check::poll_statuses;
     use uptime::{app::ssr::AppState, status_check::init_statuses};
+
+    tracing_subscriber::registry()
+        .with(
+            tracing_subscriber::EnvFilter::try_from_default_env()
+                .unwrap_or_else(|_| format!("info,{}=debug", env!("CARGO_CRATE_NAME")).into()),
+        )
+        .with(tracing_subscriber::fmt::layer())
+        .try_init()
+        .expect("Failed to init tracing");
 
     let args = Args::parse();
 
@@ -55,7 +65,7 @@ async fn main() {
         .expect("Failed to setup database");
 
     let interval = config.poll_internal.unwrap_or(Duration::from_secs(30));
-    logging::log!("Polling every {interval:?}");
+    tracing::info!("Polling every {interval:?}");
     tokio::spawn(poll_statuses(db.clone(), interval));
 
     // Setting get_configuration(None) means we'll be using cargo-leptos's env values
@@ -77,7 +87,7 @@ async fn main() {
         .with_state(state);
 
     let listener = tokio::net::TcpListener::bind(&addr).await.unwrap();
-    logging::log!("listening on http://{}", &addr);
+    tracing::info!("listening on http://{}", &addr);
     axum::serve(listener, app.into_make_service())
         .with_graceful_shutdown(shutdown_signal())
         .await

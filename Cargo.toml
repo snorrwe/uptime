@@ -13,7 +13,10 @@ leptos = { version = "0.6", features = ["nightly"] }
 leptos_axum = { version = "0.6", optional = true }
 leptos_meta = { version = "0.6", features = ["nightly"] }
 leptos_router = { version = "0.6", features = ["nightly"] }
-tokio = { version = "1", features = ["rt-multi-thread", "signal"], optional = true }
+tokio = { version = "1", features = [
+    "rt-multi-thread",
+    "signal",
+], optional = true }
 tower = { version = "0.4", optional = true, features = ["util"] }
 tower-http = { version = "0.5", features = ["fs"], optional = true }
 wasm-bindgen = "=0.2.93"
@@ -34,6 +37,10 @@ clap = { version = "4.5.18", optional = true }
 clap_derive = { version = "4.5.18", optional = true }
 anyhow = "1.0.89"
 reqwest = { version = "0.12.7", optional = true }
+tracing-subscriber = { version = "0.3.18", optional = true, features = [
+    "env-filter",
+    "fmt",
+] }
 
 [features]
 default = ["hydrate", "ssr"]
@@ -53,6 +60,7 @@ ssr = [
     "leptos_meta/ssr",
     "leptos_router/ssr",
     "dep:tracing",
+    "dep:tracing-subscriber",
 ]
 
 # Defines a size-optimized profile for the WASM bundle in release mode
