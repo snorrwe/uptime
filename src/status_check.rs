@@ -2,7 +2,7 @@ use std::{collections::HashMap, time::Duration};
 
 use anyhow::Context;
 use sqlx::{Acquire, SqlitePool};
-use tracing::{debug, error};
+use tracing::{debug, error, info};
 
 use crate::app::Entry;
 
@@ -71,6 +71,7 @@ where id = $1
 // TODO: config interval
 pub async fn poll_statuses(db: SqlitePool, interval: Duration) -> anyhow::Result<()> {
     loop {
+        info!("Polling site statuses");
         if let Err(err) = poll_statuses_once(&db).await {
             error!(?err, "Status poll failed");
         }
