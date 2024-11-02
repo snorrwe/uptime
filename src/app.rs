@@ -305,7 +305,7 @@ fn SiteDetails() -> impl IntoView {
                             <div>
                                 {d
                                     .history
-                                    .chunk_by(|a, b| a.poll_time.weekday() == b.poll_time.weekday())
+                                    .chunk_by(|a, b| a.poll_time.date() == b.poll_time.date())
                                     .map(|chunk| {
                                         let day = chunk[0].poll_time.date();
                                         view! {
