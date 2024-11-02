@@ -1,3 +1,4 @@
+use chrono::Datelike;
 use std::time::Duration;
 
 use crate::error_template::{AppError, ErrorTemplate};
@@ -300,9 +301,23 @@ fn SiteDetails() -> impl IntoView {
                                             }
                                         })
                                 }}
-                                <ul class="flex flex-row-reverse gap-1 flex-wrap">
-                                    {d.history.iter().map(status_pip).collect_view()}
-                                </ul>
+                            </div>
+                            <div>
+                                {d
+                                    .history
+                                    .chunk_by(|a, b| a.poll_time.weekday() == b.poll_time.weekday())
+                                    .map(|chunk| {
+                                        let day = chunk[0].poll_time.date();
+                                        view! {
+                                            <div class="px-5 py-3 even:text-white rounded-lg even:bg-gray-600 odd:bg-gray-300 gap-2">
+                                                <span>{day.to_string()}</span>
+                                                <ul class="flex flex-row-reverse gap-1 flex-wrap">
+                                                    {chunk.iter().map(status_pip).collect_view()}
+                                                </ul>
+                                            </div>
+                                        }
+                                    })
+                                    .collect_view()}
                             </div>
                         }
                             .into_view()
