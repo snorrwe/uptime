@@ -50,10 +50,19 @@ spec:
           {{- with .Values.volumeMounts }}
             {{- toYaml . | nindent 12 }}
           {{- end }}
+          {{- if .Values.persistence.enabled }}
+            - name: storage
+              mountPath: /var/uptime
+          {{- end }}
       volumes:
         - name: config-volume
           configMap:
             name: uptime-config
+        {{- if .Values.persistence.enabled }}
+        - name: storage
+          persistentVolumeClaim:
+            claimName {{ include "uptime.fullname" . }}-pvc
+        {{- end}}
       {{- with .Values.volumes }}
         {{- toYaml . | nindent 8 }}
       {{- end }}

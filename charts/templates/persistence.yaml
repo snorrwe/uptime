@@ -1,0 +1,16 @@
+{{- if .Values.persistence.enabled -}}
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ include "uptime.fullname" . }}-pvc
+  labels:
+    app: {{ include "uptime.name" . }}
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: {{ .Values.persistence.size }}
+  storageClassName: "" # Empty string must be explicitly set otherwise default StorageClass will be set
+  volumeName: uptime-pv
+{{- end }}
