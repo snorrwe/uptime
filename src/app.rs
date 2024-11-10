@@ -15,8 +15,32 @@ pub struct Entry {
 
 #[derive(Deserialize)]
 pub struct Config {
+    #[cfg_attr(
+        feature = "ssr",
+        serde(deserialize_with = "de_duration::deser_duration")
+    )]
+    #[serde(default)]
     pub poll_interval: Option<Duration>,
     pub entries: Vec<Entry>,
+}
+
+#[cfg(feature = "ssr")]
+mod de_duration {
+    use super::Duration;
+    use serde::{Deserialize as _, Deserializer};
+
+    pub fn deser_duration<'de, D>(deserializer: D) -> Result<Option<Duration>, D::Error>
+    where
+        D: Deserializer<'de>,
+    {
+        let Some(string) = Option::<String>::deserialize(deserializer)? else {
+            return Ok(None);
+        };
+
+        parse_duration::parse(&string)
+            .map(Some)
+            .map_err(serde::de::Error::custom)
+    }
 }
 
 #[cfg(feature = "ssr")]
@@ -441,5 +465,35 @@ fn status_pip(s: &HistoryRow) -> impl IntoView {
                 {PIP}
             </span>
         </li>
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_poll_interval_parsing() {
+        let config: Config = toml::from_str(
+            r#"
+poll_interval = "1h"
+entries = []
+"#,
+        )
+        .expect("Failed to parse config");
+
+        assert_eq!(
+            config.poll_interval.expect("poll_interval missing"),
+            Duration::from_secs(3600)
+        );
+
+        let config: Config = toml::from_str(
+            r#"
+entries = []
+"#,
+        )
+        .expect("Failed to parse config");
+
+        assert!(config.poll_interval.is_none());
     }
 }
