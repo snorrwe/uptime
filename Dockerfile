@@ -11,6 +11,7 @@ RUN curl --proto '=https' --tlsv1.2 -LsSf https://github.com/leptos-rs/cargo-lep
 
 # Add the WASM target
 RUN rustup target add wasm32-unknown-unknown
+RUN cargo install -f wasm-bindgen-cli --version 0.2.99
 
 WORKDIR /work
 COPY . .
