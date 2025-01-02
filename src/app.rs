@@ -463,11 +463,12 @@ fn status_pip(s: &HistoryRow) -> impl IntoView {
 mod tests {
     use super::*;
 
-    #[test]
+    #[cfg_attr(feature = "ssr", test)]
+    #[allow(unused)]
     fn test_poll_interval_parsing() {
         let config: Config = toml::from_str(
             r#"
-poll_interval = "1h"
+poll_interval = "1 hour"
 entries = []
 "#,
         )
