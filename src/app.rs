@@ -1,10 +1,12 @@
-use std::time::Duration;
-
 use crate::error_template::{AppError, ErrorTemplate};
-use leptos::*;
+use leptos::prelude::*;
 use leptos_meta::*;
-use leptos_router::*;
+use leptos_router::components::{Route, Router, Routes, A};
+use leptos_router::hooks::{use_location, use_params};
+use leptos_router::params::Params;
+use leptos_router::path;
 use serde_derive::{Deserialize, Serialize};
+use std::time::Duration;
 
 #[derive(Deserialize)]
 pub struct Entry {
@@ -47,7 +49,7 @@ mod de_duration {
 pub mod ssr {
 
     use axum::extract::FromRef;
-    use leptos::LeptosOptions;
+    use leptos::prelude::LeptosOptions;
     use sqlx::SqlitePool;
 
     #[derive(Debug, FromRef, Clone)]
@@ -168,22 +170,24 @@ pub fn App() -> impl IntoView {
     provide_meta_context();
 
     view! {
-        <Stylesheet id="leptos" href="/pkg/uptime.css" />
+        <head>
+            <Stylesheet id="leptos" href="/pkg/uptime.css" />
 
-        // sets the document title
-        <Title text="Uptime" />
+            // sets the document title
+            <Title text="Uptime" />
+        </head>
 
         // content for this welcome page
-        <Router fallback=|| {
-            let mut outside_errors = Errors::default();
-            outside_errors.insert_with_default_key(AppError::NotFound);
-            view! { <ErrorTemplate outside_errors /> }.into_view()
-        }>
+        <Router>
             <Breadcrumbs />
             <main class="container mx-auto">
-                <Routes>
-                    <Route path="" view=HomePage />
-                    <Route path="/site/:id" view=SiteDetails />
+                <Routes fallback=|| {
+                    let mut outside_errors = Errors::default();
+                    outside_errors.insert_with_default_key(AppError::NotFound);
+                    view! { <ErrorTemplate outside_errors /> }.into_any()
+                }>
+                    <Route path=path!("") view=HomePage />
+                    <Route path=path!("/site/:id") view=SiteDetails />
                 </Routes>
             </main>
         </Router>
@@ -209,12 +213,7 @@ fn BreadcrumbItem(name: String, url: String) -> impl IntoView {
                     d="m1 9 4-4-4-4"
                 />
             </svg>
-            <A
-                href=url
-                class="ms-1 text-sm font-medium text-gray-700 hover:text-blue-600 md:ms-2 dark:text-gray-400 dark:hover:text-white"
-            >
-                {name}
-            </A>
+            <A href=url>{name}</A>
         </div>
     }
 }
@@ -229,10 +228,7 @@ fn Breadcrumbs() -> impl IntoView {
         >
             <ol class="inline-flex items-center space-x-1 md:space-x-2 rtl:space-x-reverse">
                 <li class="inline-flex items-center">
-                    <A
-                        href="/"
-                        class="inline-flex items-center text-sm font-medium text-gray-700 hover:text-blue-600 dark:text-gray-400 dark:hover:text-white"
-                    >
+                    <A href="/">
                         <svg
                             class="w-3 h-3 me-2.5"
                             aria-hidden="true"
@@ -268,7 +264,7 @@ fn Breadcrumbs() -> impl IntoView {
 
 #[derive(Params, Debug, PartialEq, Eq, Clone, Copy)]
 struct SiteDetailsParams {
-    pub id: i64,
+    pub id: Option<i64>,
 }
 
 #[component]
@@ -287,25 +283,20 @@ fn LoadingSpinner() -> impl IntoView {
 #[component]
 fn SiteDetails() -> impl IntoView {
     let param = use_params::<SiteDetailsParams>();
-    let id = move || param.with(|p| p.as_ref().map(|p| p.id).unwrap_or_default());
+    let id = move || param.with(|p| p.as_ref().ok().and_then(|p| p.id).unwrap_or_default());
 
-    let details = create_resource(|| (), move |_| get_status_details(id()));
+    let details = Resource::new(|| (), move |_| get_status_details(id()));
 
     view! {
         <Suspense fallback=LoadingSpinner>
-            {move || {
-                match details() {
-                    None => {
-                        view! {
-                            <h1 class="text-4xl">"Uptime"</h1>
-                            <LoadingSpinner />
-                        }
-                            .into_view()
+            {move || Suspend::new(async move {
+                let details = details.await;
+                match details {
+                    Err(err) => {
+                        view! { <h1 class="text-4xl">"Error "{move || err.to_string()}</h1> }
+                            .into_any()
                     }
-                    Some(Err(err)) => {
-                        view! { <h1 class="text-4xl">"Error "{err.to_string()}</h1> }.into_view()
-                    }
-                    Some(Ok(d)) => {
+                    Ok(d) => {
                         let last = d.history.first().cloned();
                         view! {
                             <h1 class="text-4xl">"Uptime "{d.name}</h1>
@@ -343,17 +334,17 @@ fn SiteDetails() -> impl IntoView {
                                     .collect_view()}
                             </div>
                         }
-                            .into_view()
+                            .into_any()
                     }
                 }
-            }}
+            })}
         </Suspense>
     }
 }
 
 #[component]
 fn HomePage() -> impl IntoView {
-    let statuses = create_resource(|| (), |_| list_statuses());
+    let statuses = Resource::new(|| (), |_| list_statuses());
 
     view! {
         <h1 class="text-4xl">Uptime</h1>
@@ -410,7 +401,7 @@ fn status_row(s: &[StatusRow]) -> impl IntoView {
             <td class="flex flex-row gap-2">
                 <A href=link>
                     <div class="cursor-pointer text-blue-600 underline decoration-gray-800 hover:opacity-80 focus:outline-none focus:opacity-80 dark:decoration-white">
-                        {&first.name}
+                        {move || first.name.clone()}
                     </div>
                 </A>
                 <A target="_blank" href=public_url.clone()>

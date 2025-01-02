@@ -44,6 +44,7 @@
             pkg-config
             nodejs
             kubernetes-helm
+            wasm-bindgen-cli
             binaryen # wasm-opt
 
             # e2e tests
