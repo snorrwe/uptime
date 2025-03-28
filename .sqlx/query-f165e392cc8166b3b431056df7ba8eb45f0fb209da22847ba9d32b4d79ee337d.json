@@ -1,6 +1,6 @@
 {
   "db_name": "SQLite",
-  "query": "\nselect id, coalesce(internal_url, public_url) as url from status_entry\n",
+  "query": "\nSELECT\n    id,\n    coalesce(internal_url, public_url) AS url\nFROM\n    status_entry\n",
   "describe": {
     "columns": [
       {
@@ -22,5 +22,5 @@
       false
     ]
   },
-  "hash": "78428a83f0d77a47fcc4bfccdbcf69a82b2c132b743a7d5efcd86d9aa3728a39"
+  "hash": "f165e392cc8166b3b431056df7ba8eb45f0fb209da22847ba9d32b4d79ee337d"
 }

@@ -1,0 +1,12 @@
+{
+  "db_name": "SQLite",
+  "query": "\nINSERT INTO\n    status_history (status_id, status_code)\nVALUES\n    (?, ?)\n            ",
+  "describe": {
+    "columns": [],
+    "parameters": {
+      "Right": 2
+    },
+    "nullable": []
+  },
+  "hash": "0fae856c701fb08361d36d805b73b1842112e5689d542608530c26dc2dbd269d"
+}

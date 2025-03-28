@@ -30,10 +30,14 @@ pub async fn init_statuses(db: &SqlitePool, entries: &[Entry]) -> anyhow::Result
         let internal_url = entry.polling_url.as_ref().map(|x| x.as_str());
         sqlx::query!(
             r#"
-        INSERT INTO status_entry (name, public_url, internal_url)
-        VALUES ($1, $2, $3)
-        ON CONFLICT DO UPDATE
-        set public_url=$2, internal_url=$3
+INSERT INTO
+    status_entry (name, public_url, internal_url)
+VALUES
+    ($1, $2, $3) ON CONFLICT DO
+UPDATE
+SET
+    public_url = $2,
+    internal_url = $3
 "#,
             name,
             public_url,
@@ -48,12 +52,15 @@ pub async fn init_statuses(db: &SqlitePool, entries: &[Entry]) -> anyhow::Result
         debug!(name, id, "Removing missing entry");
         sqlx::query!(
             r#"
-delete from status_history
-where status_id = $1
-;
-delete from status_entry
-where id = $1
-;
+DELETE FROM
+    status_history
+WHERE
+    status_id = $1;
+
+DELETE FROM
+    status_entry
+WHERE
+    id = $1;
 "#,
             id,
             id
@@ -82,7 +89,11 @@ pub async fn poll_statuses(db: SqlitePool, interval: Duration) -> anyhow::Result
 pub async fn poll_statuses_once(db: &SqlitePool) -> anyhow::Result<()> {
     let entries = sqlx::query!(
         r#"
-select id, coalesce(internal_url, public_url) as url from status_entry
+SELECT
+    id,
+    coalesce(internal_url, public_url) AS url
+FROM
+    status_entry
 "#
     )
     .fetch_all(db)
@@ -107,7 +118,10 @@ select id, coalesce(internal_url, public_url) as url from status_entry
 
         sqlx::query!(
             r#"
-INSERT INTO status_history (status_id, status_code) VALUES (?, ?)
+INSERT INTO
+    status_history (status_id, status_code)
+VALUES
+    (?, ?)
             "#,
             row.id,
             status_code
