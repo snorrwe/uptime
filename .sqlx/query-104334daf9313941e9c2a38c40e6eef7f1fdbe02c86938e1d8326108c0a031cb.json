@@ -1,0 +1,44 @@
+{
+  "db_name": "SQLite",
+  "query": "\nWITH ranked_history AS (\n    SELECT\n        se.id,\n        public_url AS \"public_url!\",\n        se.\"name\" AS \"name!\",\n        status_code AS \"last_status!\",\n        sh.\"created\" AS \"poll_time!\",\n        row_number() over (\n            PARTITION by se.id\n            ORDER BY\n                sh.created DESC\n        ) AS rn\n    FROM\n        status_entry AS se\n        INNER JOIN (\n            SELECT\n                status_id,\n                status_code,\n                created\n            FROM\n                status_history\n        ) AS sh ON sh.status_id = se.id\n)\nSELECT\n    id,\n    \"public_url!\",\n    \"name!\",\n    \"last_status!\",\n    \"poll_time!\"\nFROM\n    ranked_history\nWHERE\n    rn <= 10\nORDER BY\n    id,\n    \"poll_time!\" DESC\n",
+  "describe": {
+    "columns": [
+      {
+        "name": "id",
+        "ordinal": 0,
+        "type_info": "Integer"
+      },
+      {
+        "name": "public_url!",
+        "ordinal": 1,
+        "type_info": "Text"
+      },
+      {
+        "name": "name!",
+        "ordinal": 2,
+        "type_info": "Text"
+      },
+      {
+        "name": "last_status!",
+        "ordinal": 3,
+        "type_info": "Integer"
+      },
+      {
+        "name": "poll_time!",
+        "ordinal": 4,
+        "type_info": "Datetime"
+      }
+    ],
+    "parameters": {
+      "Right": 0
+    },
+    "nullable": [
+      false,
+      false,
+      false,
+      false,
+      true
+    ]
+  },
+  "hash": "104334daf9313941e9c2a38c40e6eef7f1fdbe02c86938e1d8326108c0a031cb"
+}

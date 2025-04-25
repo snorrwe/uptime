@@ -109,6 +109,9 @@ FROM
     ranked_history
 WHERE
     rn <= 10
+ORDER BY
+    id,
+    "poll_time!" DESC
 "#
     )
     .fetch_all(db)
