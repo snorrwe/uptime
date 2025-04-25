@@ -1,0 +1,2 @@
+DROP INDEX idx_history_entry_id_created;
+DROP INDEX idx_status_history_status_id;
