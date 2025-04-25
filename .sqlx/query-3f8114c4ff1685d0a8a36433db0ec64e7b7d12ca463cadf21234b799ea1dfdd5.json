@@ -1,0 +1,50 @@
+{
+  "db_name": "SQLite",
+  "query": "\nSELECT\n    se.id,\n    public_url AS \"public_url!\",\n    se.\"name\" AS \"name!\",\n    status_code AS \"last_status!\",\n    sh.\"created\" AS \"poll_time!\",\n    row_number() over (\n        PARTITION by se.id\n        ORDER BY\n            sh.created DESC\n    ) AS rn\nFROM\n    status_entry AS se\n    INNER JOIN (\n        SELECT\n            status_id,\n            status_code,\n            created\n        FROM\n            status_history\n    ) AS sh ON sh.status_id = se.id\nORDER BY\n    rn\nLIMIT\n    10\n",
+  "describe": {
+    "columns": [
+      {
+        "name": "id",
+        "ordinal": 0,
+        "type_info": "Integer"
+      },
+      {
+        "name": "public_url!",
+        "ordinal": 1,
+        "type_info": "Text"
+      },
+      {
+        "name": "name!",
+        "ordinal": 2,
+        "type_info": "Text"
+      },
+      {
+        "name": "last_status!",
+        "ordinal": 3,
+        "type_info": "Integer"
+      },
+      {
+        "name": "poll_time!",
+        "ordinal": 4,
+        "type_info": "Datetime"
+      },
+      {
+        "name": "rn",
+        "ordinal": 5,
+        "type_info": "Integer"
+      }
+    ],
+    "parameters": {
+      "Right": 0
+    },
+    "nullable": [
+      false,
+      false,
+      false,
+      false,
+      true,
+      false
+    ]
+  },
+  "hash": "3f8114c4ff1685d0a8a36433db0ec64e7b7d12ca463cadf21234b799ea1dfdd5"
+}

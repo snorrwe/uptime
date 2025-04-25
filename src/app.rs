@@ -67,6 +67,8 @@ pub struct StatusRow {
     pub name: String,
     pub last_status: i64,
     pub poll_time: chrono::NaiveDateTime,
+    #[serde(skip)]
+    pub rn: i64,
 }
 
 #[server(GetSatuses, "/status")]
@@ -76,39 +78,31 @@ async fn list_statuses() -> Result<Vec<StatusRow>, ServerFnError> {
     sqlx::query_as!(
         StatusRow,
         r#"
-WITH ranked_history AS (
-    SELECT
-        se.id,
-        public_url AS "public_url!",
-        se."name" AS "name!",
-        status_code AS "last_status!",
-        sh."created" AS "poll_time!",
-        row_number() over (
-            PARTITION by se.id
-            ORDER BY
-                sh.created DESC
-        ) AS rn
-    FROM
-        status_entry AS se
-        INNER JOIN (
-            SELECT
-                status_id,
-                status_code,
-                created
-            FROM
-                status_history
-        ) AS sh ON sh.status_id = se.id
-)
 SELECT
-    id,
-    "public_url!",
-    "name!",
-    "last_status!",
-    "poll_time!"
+    se.id,
+    public_url AS "public_url!",
+    se."name" AS "name!",
+    status_code AS "last_status!",
+    sh."created" AS "poll_time!",
+    row_number() over (
+        PARTITION by se.id
+        ORDER BY
+            sh.created DESC
+    ) AS rn
 FROM
-    ranked_history
-WHERE
-    rn <= 10
+    status_entry AS se
+    INNER JOIN (
+        SELECT
+            status_id,
+            status_code,
+            created
+        FROM
+            status_history
+    ) AS sh ON sh.status_id = se.id
+ORDER BY
+    rn
+LIMIT
+    10
 "#
     )
     .fetch_all(db)
