@@ -8,7 +8,7 @@ struct Args {
 #[cfg(feature = "ssr")]
 #[tokio::main]
 async fn main() {
-    use std::str::FromStr;
+    use std::str::FromStr as _;
     use std::time::Duration;
 
     use axum::Router;
@@ -38,20 +38,20 @@ async fn main() {
     let config: Config = toml::from_str(&config).expect("Failed to parse config file");
 
     let db_url = std::env::var("DATABASE_URL").unwrap_or_else(|_| "uptime.db".to_owned());
-    let db_path = std::path::PathBuf::from_str(&db_url).unwrap();
 
-    if let Some(parent) = db_path.parent() {
-        std::fs::create_dir_all(parent).expect("Failed to create directories for database");
+    let opts = sqlx::sqlite::SqliteConnectOptions::from_str(&db_url)
+        .expect("Failed to parse DATABASE_URL")
+        .journal_mode(sqlx::sqlite::SqliteJournalMode::Wal)
+        .create_if_missing(true)
+        .foreign_keys(true);
+
+    if let Some(p) = opts.get_filename().parent() {
+        tracing::debug!(?p, "Creating parent directories");
+        std::fs::create_dir_all(p).expect("Failed to create dirs")
     }
 
     let db = SqlitePoolOptions::new()
-        .connect_with(
-            sqlx::sqlite::SqliteConnectOptions::new()
-                .journal_mode(sqlx::sqlite::SqliteJournalMode::Wal)
-                .create_if_missing(true)
-                .foreign_keys(true)
-                .filename(&db_path),
-        )
+        .connect_with(opts)
         .await
         .expect("Failed to open database");
 
