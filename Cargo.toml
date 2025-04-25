@@ -23,21 +23,21 @@ wasm-bindgen = "=0.2.100"
 thiserror = "2"
 tracing = { version = "0.1", optional = true }
 http = "1"
-sqlx = { version = "0.8.2", features = [
+sqlx = { version = "0.8.5", features = [
     "runtime-tokio",
     "sqlite",
     "chrono",
 ], optional = true }
-serde = "1.0.214"
-serde_derive = "1.0.214"
-chrono = { version = "0.4.38", features = ["serde"] }
-toml = { version = "0.8.19", optional = true }
-url = { version = "2.5.3", features = ["serde"] }
-clap = { version = "4.5.20", optional = true }
-clap_derive = { version = "4.5.18", optional = true }
-anyhow = "1.0.93"
-reqwest = { version = "0.12.9", optional = true }
-tracing-subscriber = { version = "0.3.18", optional = true, features = [
+serde = "1.0.219"
+serde_derive = "1.0.219"
+chrono = { version = "0.4.40", features = ["serde"] }
+toml = { version = "0.8.20", optional = true }
+url = { version = "2.5.4", features = ["serde"] }
+clap = { version = "4.5.37", optional = true }
+clap_derive = { version = "4.5.32", optional = true }
+anyhow = "1.0.98"
+reqwest = { version = "0.12.15", optional = true }
+tracing-subscriber = { version = "0.3.19", optional = true, features = [
     "env-filter",
     "fmt",
 ] }
