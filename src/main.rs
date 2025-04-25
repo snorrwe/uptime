@@ -16,6 +16,8 @@ async fn main() {
     use leptos::prelude::*;
     use leptos_axum::{generate_route_list, LeptosRoutes};
     use sqlx::sqlite::SqlitePoolOptions;
+    use tower_http::compression::CompressionLayer;
+    use tower_http::decompression::RequestDecompressionLayer;
     use tracing_subscriber::prelude::*;
     use uptime::app::*;
     use uptime::fileserv::file_and_error_handler;
@@ -84,7 +86,9 @@ async fn main() {
     let app = Router::new()
         .leptos_routes(&state, routes, App)
         .fallback(file_and_error_handler)
-        .with_state(state);
+        .with_state(state)
+        .layer(RequestDecompressionLayer::new())
+        .layer(CompressionLayer::new());
 
     let listener = tokio::net::TcpListener::bind(&addr).await.unwrap();
     tracing::info!("listening on http://{}", &addr);
