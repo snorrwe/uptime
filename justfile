@@ -1,6 +1,8 @@
 default:
     @just --list
 
+export DATABASE_URL := "sqlite://uptime.db"
+
 # Run the project locally
 watch $RUST_BACKTRACE="1":
     cargo leptos watch
@@ -10,7 +12,7 @@ test:
     cargo leptos test
     cargo leptos end-to-end
 
-prepare $DATABASE_URL="sqlite://uptime.db":
+prepare:
     cargo sqlx prepare
 
 fmt:
@@ -21,7 +23,7 @@ fmt:
 add_migration name:
     sqlx migrate add -r {{ name }}
 
-setup-db $DATABASE_URL="sqlite://uptime.db":
+setup-db:
     sqlx database setup
     @just prepare
 
