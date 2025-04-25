@@ -1,6 +1,6 @@
 {
   "db_name": "SQLite",
-  "query": "\nselect name as \"name!\", public_url as \"public_url!\" from status_entry where id = ?\n",
+  "query": "\nSELECT\n    name AS \"name!\",\n    public_url AS \"public_url!\"\nFROM\n    status_entry\nWHERE\n    id = ?\n",
   "describe": {
     "columns": [
       {
@@ -22,5 +22,5 @@
       false
     ]
   },
-  "hash": "d64bbd61b9fda781b07da95ce6763f25aba0c06db335dc4c4c093fe4f111294b"
+  "hash": "840010725f90961c4ae4b3c3ddfa55e0a32ed12b3111ee6a4b616f10d98fa504"
 }

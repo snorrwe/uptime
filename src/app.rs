@@ -145,7 +145,13 @@ async fn get_status_details(id: i64) -> Result<StatusDetails, ServerFnError> {
 
     let header = sqlx::query!(
         r#"
-select name as "name!", public_url as "public_url!" from status_entry where id = ?
+SELECT
+    name AS "name!",
+    public_url AS "public_url!"
+FROM
+    status_entry
+WHERE
+    id = ?
 "#,
         id
     )
@@ -161,10 +167,15 @@ select name as "name!", public_url as "public_url!" from status_entry where id =
     sqlx::query_as!(
         HistoryRow,
         r#"
-select status_code as "status!", created as "poll_time!"
-from status_history
-where status_id = ?
-order by created desc
+SELECT
+    status_code AS "status!",
+    created AS "poll_time!"
+FROM
+    status_history
+WHERE
+    status_id = ?
+ORDER BY
+    created DESC
 "#,
         id
     )

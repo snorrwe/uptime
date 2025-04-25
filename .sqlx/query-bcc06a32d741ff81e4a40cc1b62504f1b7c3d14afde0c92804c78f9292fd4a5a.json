@@ -1,6 +1,6 @@
 {
   "db_name": "SQLite",
-  "query": "\nselect status_code as \"status!\", created as \"poll_time!\"\nfrom status_history\nwhere status_id = ?\norder by created desc\n",
+  "query": "\nSELECT\n    status_code AS \"status!\",\n    created AS \"poll_time!\"\nFROM\n    status_history\nWHERE\n    status_id = ?\nORDER BY\n    created DESC\n",
   "describe": {
     "columns": [
       {
@@ -22,5 +22,5 @@
       true
     ]
   },
-  "hash": "9e67d889be648d741ae2f648b5fd48c34c6b724226a16566375b7202056a689a"
+  "hash": "bcc06a32d741ff81e4a40cc1b62504f1b7c3d14afde0c92804c78f9292fd4a5a"
 }
