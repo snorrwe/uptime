@@ -317,7 +317,7 @@ fn SiteDetails() -> impl IntoView {
     let details = Resource::new(|| (), move |_| get_status_details(id()));
 
     view! {
-        <Suspense fallback=LoadingSpinner>
+        <Transition fallback=LoadingSpinner>
             {move || Suspend::new(async move {
                 let details = details.await;
                 match details {
@@ -367,7 +367,7 @@ fn SiteDetails() -> impl IntoView {
                     }
                 }
             })}
-        </Suspense>
+        </Transition>
     }
 }
 
