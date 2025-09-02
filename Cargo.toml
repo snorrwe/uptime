@@ -9,10 +9,10 @@ crate-type = ["cdylib", "rlib"]
 [dependencies]
 axum = { version = "*", optional = true, features = ["macros"] }
 console_error_panic_hook = "0.1"
-leptos = { version = "0.7", features = ["nightly"] }
-leptos_axum = { version = "0.7", optional = true }
-leptos_meta = "0.7"
-leptos_router = "0.7"
+leptos = { version = "0.8", features = ["nightly"] }
+leptos_axum = { version = "0.8", optional = true }
+leptos_meta = "0.8"
+leptos_router = "0.8"
 tokio = { version = "1", features = [
     "rt-multi-thread",
     "signal",
@@ -35,7 +35,7 @@ sqlx = { version = "0.8.5", features = [
 serde = "1.0.219"
 serde_derive = "1.0.219"
 chrono = { version = "0.4.40", features = ["serde"] }
-toml = { version = "0.8.20", optional = true }
+toml = { version = "0.9.5", optional = true }
 url = { version = "2.5.4", features = ["serde"] }
 clap = { version = "4.5.37", optional = true }
 clap_derive = { version = "4.5.32", optional = true }

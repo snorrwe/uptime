@@ -138,7 +138,7 @@ pub struct HistoryRow {
     pub poll_time: chrono::NaiveDateTime,
 }
 
-#[server(GetSatus, "/status/:id")]
+#[server(GetSatus, "/status/{id}")]
 async fn get_status_details(id: i64) -> Result<StatusDetails, ServerFnError> {
     let state = expect_context::<ssr::AppState>();
     let db = &state.db;
