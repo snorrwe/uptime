@@ -23,8 +23,7 @@ FROM alpine AS runner
 WORKDIR /app
 
 COPY --from=builder /work/target/release/uptime /app/
-COPY --from=builder /work/target/tmp /app/
-COPY --from=builder /work/target/site /app/
+COPY --from=builder /work/target/site /app/site
 COPY --from=builder /work/Cargo.toml /app/
 
 ENV RUST_LOG="info"
